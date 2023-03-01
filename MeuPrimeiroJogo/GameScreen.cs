@@ -33,7 +33,8 @@ namespace AsteroidsGame
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             startButtonTexture = Content.Load<Texture2D>("images/btnStart");
-            backgroundTexture = Content.Load<Texture2D>("images/fundo");            
+            backgroundTexture = Content.Load<Texture2D>("images/fundo");
+
             IsMouseVisible = true;
         }
 
@@ -52,10 +53,14 @@ namespace AsteroidsGame
 
             //Clique no botão
             if (mouseState.LeftButton == ButtonState.Pressed && startButtonRectangle.Contains(mouseState.Position))
-            {                
+            {
                 // Iniciar o jogo
-                Game2 game = new Game2();                
-                game.Run();                
+                while (true)
+                {
+                    Game3 game = new Game3();
+                    game.Run();
+                }
+                               
             }
 
             base.Update(gameTime);
@@ -71,6 +76,8 @@ namespace AsteroidsGame
 
             // Desenha o botão de iniciar
             spriteBatch.Draw(startButtonTexture, startButtonRectangle, Color.White);
+
+            
 
             spriteBatch.End();
 
