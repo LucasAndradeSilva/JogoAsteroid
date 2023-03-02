@@ -13,12 +13,19 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin fontes/File.spritefont
+#begin fontes/arial.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:fontes/File.spritefont;fontes/arial.spritefont
+/build:fontes/arial.spritefont
+
+#begin fontes/titulo.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fontes/titulo.spritefont
 
 #begin Images/asteroid.png
 /importer:TextureImporter

@@ -1,3 +1,5 @@
 ﻿
-using var game = new AsteroidsGame.GameScreen();
+using Asteroid.Windows;
+
+using var game = new StartScreen();
 game.Run();
