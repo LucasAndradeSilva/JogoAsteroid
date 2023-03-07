@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Asteroid.Dao.Elements
+namespace Asteroid.Models.Elements
 {
     public abstract class Element {
         public Rectangle Rectangle {

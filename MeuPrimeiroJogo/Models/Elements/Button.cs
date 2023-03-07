@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asteroid.Dao.Elements
+namespace Asteroid.Models.Elements
 {
     public class Button : Element
     {

@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Asteroid.Dao.Elements;
+using Asteroid.Models.Elements;
 using Microsoft.Xna.Framework.Input;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Asteroid.Helpers
 {

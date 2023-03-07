@@ -1,11 +1,11 @@
-﻿using Asteroid.Dao.Elements;
+﻿using Asteroid.Models.Elements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asteroid.Dao.Characters.Asteroid
+namespace Asteroid.Models.Characters.Asteroid
 {
     public class AsteroidRock : Character
     {

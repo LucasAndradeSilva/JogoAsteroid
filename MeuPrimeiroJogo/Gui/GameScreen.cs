@@ -1,20 +1,23 @@
-﻿using Asteroid.Dao.Characters.Asteroid;
-using Asteroid.Dao.Characters.Nave;
-using Asteroid.Dao.Elements;
+﻿using Asteroid.Models.Characters.Asteroid;
+using Asteroid.Models.Characters.Nave;
+using Asteroid.Models.Elements;
 using Asteroid.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using Asteroid.Models.Screens;
+using Asteroid.Gui;
+using System.Drawing;
+using System.Diagnostics.Metrics;
+using Asteroid.Models.Players;
 
 namespace Asteroid.Windows
 {
-    public class GameScreen : Microsoft.Xna.Framework.Game
+    public class GameScreen : Screen
     {
-        #region Elements
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        #region Elements        
         Background Background;
         Text TxtScore;
         #endregion
@@ -23,8 +26,8 @@ namespace Asteroid.Windows
         Nave Nave;
         AsteroidRock AsteroidRock;
         #endregion
-                        
-        Random random = new Random();        
+
+        Random random = new Random();
 
         // Pontuação do jogador
         int score = 0;
@@ -32,28 +35,21 @@ namespace Asteroid.Windows
         int limitSpeed = 100;
 
 
-        public GameScreen()
-        {
-            graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 800;
-            graphics.PreferredBackBufferHeight = 600;
-            Content.RootDirectory = "Content";
-        }
-
-        protected override void Initialize()
-        {
+        public GameScreen(AsteroidGame game) : base(game) {
             Nave = new Nave()
             {
                 Width = 64,
                 Heigth = 64,
                 Speed = 5,
                 Size = 64,
-                TimeBetweenShots = 200,                
+                Y = game.graphics.PreferredBackBufferHeight / 2,
+                X = game.graphics.PreferredBackBufferWidth / 2,
+                TimeBetweenShots = 200,
                 Bullet = new Bullet()
                 {
                     Speed = 8,
                     Width = 8,
-                    Heigth = 16            
+                    Heigth = 16
                 },
                 Bullets = new List<Bullet>(),
             };
@@ -67,32 +63,28 @@ namespace Asteroid.Windows
 
             Background = new Background()
             {
-                Width = graphics.PreferredBackBufferWidth,
-                Heigth = graphics.PreferredBackBufferHeight
+                Width = game.graphics.PreferredBackBufferWidth,
+                Heigth = game.graphics.PreferredBackBufferHeight
             };
             TxtScore = new Text
             {
                 X = 10,
                 Y = 10
-            };            
-                        
-            base.Initialize();
+            };
         }
 
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            AsteroidRock.Texture = Content.Load<Texture2D>("images/asteroid");
-            Nave.Texture = Content.Load<Texture2D>("images/foguete");
-            Nave.Bullet.Texture = Content.Load<Texture2D>("images/tiro");
-
-            Background.Texture = Content.Load<Texture2D>("images/fundo");
-            TxtScore.SpriteFont = Content.Load<SpriteFont>("fontes/titulo");           
-        }
-
-        protected override void Update(GameTime gameTime)
+        public override void LoadContent()
         {            
+            AsteroidRock.Texture = game.Content.Load<Texture2D>("images/asteroid");
+            Nave.Texture = game.Content.Load<Texture2D>("images/foguete");
+            Nave.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
+
+            Background.Texture = game.Content.Load<Texture2D>("images/fundo");
+            TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
+        }
+
+        public override void Update(GameTime gameTime)
+        {
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
 
@@ -115,24 +107,24 @@ namespace Asteroid.Windows
             }
 
             // Limita o movimento do jogador dentro da tela
-            Nave.X = MathHelper.Clamp(Nave.X, 0, graphics.PreferredBackBufferWidth - Nave.Width);
-            Nave.Y = MathHelper.Clamp(Nave.Y, 0, graphics.PreferredBackBufferHeight - Nave.Heigth);
+            Nave.X = MathHelper.Clamp(Nave.X, 0, game.graphics.PreferredBackBufferWidth - Nave.Width);
+            Nave.Y = MathHelper.Clamp(Nave.Y, 0, game.graphics.PreferredBackBufferHeight - Nave.Heigth);
 
             // Cria novos asteroides aleatoriamente
             if (random.Next(100) < AsteroidRock.Count)
             {
                 AsteroidRock.Asteroids.Add(new AsteroidRock()
                 {
-                    X = random.Next(graphics.PreferredBackBufferWidth - 64),
+                    X = random.Next(game.graphics.PreferredBackBufferWidth - 64),
                     Y = -64,
                     Width = AsteroidRock.Size,
                     Heigth = AsteroidRock.Size
                 });
-            }
+            }            
 
             // Movimenta os asteroides
             for (int i = AsteroidRock.Asteroids.Count - 1; i >= 0; i--)
-            {
+            {                                                
                 AsteroidRock.Asteroids[i] = new AsteroidRock()
                 {
                     X = AsteroidRock.Asteroids[i].X,
@@ -140,8 +132,8 @@ namespace Asteroid.Windows
                     Width = AsteroidRock.Size,
                     Heigth = AsteroidRock.Size
                 };
-
-                if (AsteroidRock.Asteroids[i].Y > graphics.PreferredBackBufferHeight)
+                                
+                if (AsteroidRock.Asteroids[i].Y > game.graphics.PreferredBackBufferHeight)
                 {
                     AsteroidRock.Asteroids.RemoveAt(i);
                     i--;
@@ -150,7 +142,9 @@ namespace Asteroid.Windows
                 else if (AsteroidRock.Asteroids[i].Rectangle.Intersects(Nave.Rectangle))
                 {
                     // Game over
-                    Exit();
+                    game.currentScreen = new GameOver(game);
+                    game.currentScreen.LoadContent();
+                    return;
                 }
             }
 
@@ -164,8 +158,8 @@ namespace Asteroid.Windows
                     Y = Nave.Y,
                     Width = Nave.Bullet.Width,
                     Heigth = Nave.Bullet.Heigth
-                });                          
-                
+                });
+
                 Nave.ElapsedTimeSinceLastShot = 0;
             }
             else
@@ -183,7 +177,7 @@ namespace Asteroid.Windows
                     Y = Nave.Bullets[i].Y - Nave.Bullet.Speed,
                     Width = Nave.Bullet.Width,
                     Heigth = Nave.Bullet.Heigth
-                };                    
+                };
 
                 // Verifica se o projétil acertou algum asteroide
                 for (int j = AsteroidRock.Asteroids.Count - 1; j >= 0; j--)
@@ -198,13 +192,14 @@ namespace Asteroid.Windows
                         i--;
 
                         // Adiciona pontos
-                        score += 10;
+                        game.player.Score += 10;
 
-                        if (score > limitSpeed)
+                        if (game.player.Score > limitSpeed)
                         {
                             limitSpeed += 100;
                             AsteroidRock.Speed += 1;
-                            Nave.Speed += 1;
+                            AsteroidRock.Count += 1;
+                            Nave.Speed += 1;                            
                         }
 
                         // Sai do loop interno
@@ -218,21 +213,16 @@ namespace Asteroid.Windows
                 //    bulletRectangles.RemoveAt(i);
                 //    i--;
                 //}
-            }
-
-            base.Update(gameTime);
+            }            
         }
 
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.Black);
-            spriteBatch.Begin();
-
+        public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
+        {            
             // Desenha o fundo
             spriteBatch.DrawElement(Background);
 
             // Desenha o jogador
-            spriteBatch.DrawElement(Nave);            
+            spriteBatch.DrawElement(Nave);
 
             // Desenha os asteroides
             foreach (var asteroid in AsteroidRock.Asteroids)
@@ -249,12 +239,10 @@ namespace Asteroid.Windows
             }
 
             // Desenha a pontuação
-            TxtScore.Content = $"Pontuacao {score}";
+            TxtScore.Content = $"Pontuacao {game.player.Score}";
             spriteBatch.DrawText(TxtScore);
-
-            spriteBatch.End();
-
-            base.Draw(gameTime);
+            
+            game.spriteBatch = spriteBatch;
         }
     }
 }

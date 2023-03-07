@@ -13,14 +13,14 @@ using Asteroid.Gui;
 
 namespace Asteroid.Windows
 {
-    public class StartScreen : Screen
+    public class GameOver : Screen
     {        
         Button BtnStart;
         Background Background;
         Text TxtStartTitulo;
         Text TxtStartSubTitulo;
      
-        public StartScreen(AsteroidGame game) : base(game)
+        public GameOver(AsteroidGame game) : base(game)
         {
             BtnStart = new Button()
             {
@@ -38,13 +38,13 @@ namespace Asteroid.Windows
             {
                 X = game.graphics.GetCenterX() - 10,
                 Y = game.graphics.GetCenterY() - 80,
-                Content = "Asteroid Game"
+                Content = "Game Over"
             };
             TxtStartSubTitulo = new Text()
             {
                 X = game.graphics.GetCenterX(),
                 Y = game.graphics.GetCenterY() - 40,
-                Content = "Criado por Lucas Andrade"
+                Content = $"{game.player.Name} sua pontuacao foi de {game.player.Score}"
             };
         }
 

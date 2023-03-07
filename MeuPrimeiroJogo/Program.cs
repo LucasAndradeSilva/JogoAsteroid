@@ -1,5 +1,4 @@
-﻿
-using Asteroid.Windows;
+﻿using Asteroid.Gui;
 
-using var game = new StartScreen();
+var game = new AsteroidGame();
 game.Run();

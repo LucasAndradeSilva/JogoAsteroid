@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asteroid.Dao.Elements
+namespace Asteroid.Models.Screens
 {
-    public class Text : Element
+    public enum EnumCurrentScreen
     {
-        public string Content { get; set; }        
+        Start,
+        Game,
+        GameOver
     }
 }
