@@ -12,6 +12,7 @@ using Asteroid.Gui;
 using System.Drawing;
 using System.Diagnostics.Metrics;
 using Asteroid.Models.Players;
+using Asteroid.Enuns;
 
 namespace Asteroid.Windows
 {
@@ -24,16 +25,11 @@ namespace Asteroid.Windows
 
         #region Characters
         Nave Nave;
+        List<Nave> NavesEnemy = new List<Nave>();
         AsteroidRock AsteroidRock;
         #endregion
 
-        Random random = new Random();
-
-        // Pontuação do jogador
-        int score = 0;
-
-        int limitSpeed = 100;
-
+        private EnumGameLevel GameLevel { get; set; }        
 
         public GameScreen(AsteroidGame game) : base(game) {
             Nave = new Nave()
@@ -44,14 +40,14 @@ namespace Asteroid.Windows
                 Size = 64,
                 Y = game.graphics.PreferredBackBufferHeight / 2,
                 X = game.graphics.PreferredBackBufferWidth / 2,
-                TimeBetweenShots = 200,
                 Bullet = new Bullet()
                 {
                     Speed = 8,
                     Width = 8,
-                    Heigth = 16
-                },
-                Bullets = new List<Bullet>(),
+                    Heigth = 16,
+                    TimeBetweenShots = 300,
+                    Bullets = new List<Bullet>(),
+                }                
             };
             AsteroidRock = new AsteroidRock()
             {
@@ -71,6 +67,7 @@ namespace Asteroid.Windows
                 X = 10,
                 Y = 10
             };
+            
         }
 
         public override void LoadContent()
@@ -88,132 +85,43 @@ namespace Asteroid.Windows
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
 
-            // Movimento do jogador
-            if (keyboardState.IsKeyDown(Keys.Left))
-            {
-                Nave.X -= Nave.Speed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                Nave.X += Nave.Speed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Up))
-            {
-                Nave.Y -= Nave.Speed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                Nave.Y += Nave.Speed;
-            }
+            Nave.PlayerMovement(keyboardState, game.graphics);
 
-            // Limita o movimento do jogador dentro da tela
-            Nave.X = MathHelper.Clamp(Nave.X, 0, game.graphics.PreferredBackBufferWidth - Nave.Width);
-            Nave.Y = MathHelper.Clamp(Nave.Y, 0, game.graphics.PreferredBackBufferHeight - Nave.Heigth);
+            AsteroidRock.CreateAsteroid(game.graphics);
 
-            // Cria novos asteroides aleatoriamente
-            if (random.Next(100) < AsteroidRock.Count)
+            AsteroidRock.AsteroidMovement(game.graphics, (obj) =>
             {
-                AsteroidRock.Asteroids.Add(new AsteroidRock()
-                {
-                    X = random.Next(game.graphics.PreferredBackBufferWidth - 64),
-                    Y = -64,
-                    Width = AsteroidRock.Size,
-                    Heigth = AsteroidRock.Size
-                });
-            }            
+                var asteroid = obj as AsteroidRock;
+                if (asteroid.CheckCollision(Nave.Rectangle))                
+                    GameOver();                
+            });
 
-            // Movimenta os asteroides
-            for (int i = AsteroidRock.Asteroids.Count - 1; i >= 0; i--)
-            {                                                
-                AsteroidRock.Asteroids[i] = new AsteroidRock()
-                {
-                    X = AsteroidRock.Asteroids[i].X,
-                    Y = AsteroidRock.Asteroids[i].Y + AsteroidRock.Speed,
-                    Width = AsteroidRock.Size,
-                    Heigth = AsteroidRock.Size
-                };
-                                
-                if (AsteroidRock.Asteroids[i].Y > game.graphics.PreferredBackBufferHeight)
-                {
-                    AsteroidRock.Asteroids.RemoveAt(i);
-                    i--;
-                }
-                // Verifica colisão do jogador com os asteroides
-                else if (AsteroidRock.Asteroids[i].Rectangle.Intersects(Nave.Rectangle))
-                {
-                    // Game over
-                    game.currentScreen = new GameOver(game);
-                    game.currentScreen.LoadContent();
-                    return;
-                }
-            }
+            Nave.Bullet.BulletShoot(keyboardState, gameTime.ElapsedGameTime, Nave);
 
-            // Atira projéteis quando o botão esquerdo do mouse é pressionado
-            if (keyboardState.IsKeyDown(Keys.Space) && Nave.ElapsedTimeSinceLastShot >= Nave.TimeBetweenShots)// && previousMouseState.LeftButton == ButtonState.Released)
+            Nave.Bullet.BulletShootMovement(game.graphics, (obj) =>
             {
-                // Adiciona um novo projetil na posição da nave
-                Nave.Bullets.Add(new Bullet()
-                {
-                    X = Nave.X + Nave.Width / 2 - 4,
-                    Y = Nave.Y,
-                    Width = Nave.Bullet.Width,
-                    Heigth = Nave.Bullet.Heigth
-                });
+                var hit = false;
+                var bullet = obj as Bullet;
 
-                Nave.ElapsedTimeSinceLastShot = 0;
-            }
-            else
-            {
-                Nave.ElapsedTimeSinceLastShot += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
-            }
-
-            // Move os projéteis
-            for (int i = Nave.Bullets.Count - 1; i >= 0; i--)
-            {
-                var acertou = false;
-                Nave.Bullets[i] = new Bullet()
-                {
-                    X = Nave.Bullets[i].X,
-                    Y = Nave.Bullets[i].Y - Nave.Bullet.Speed,
-                    Width = Nave.Bullet.Width,
-                    Heigth = Nave.Bullet.Heigth
-                };
-
-                // Verifica se o projétil acertou algum asteroide
                 for (int j = AsteroidRock.Asteroids.Count - 1; j >= 0; j--)
                 {
-                    if (Nave.Bullets[i].Rectangle.Intersects(AsteroidRock.Asteroids[j].Rectangle))
+                    if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle))
                     {
-                        acertou = true;
-                        // Remove o asteroide e o projétil
+                        hit = true;
+                        
                         AsteroidRock.Asteroids.RemoveAt(j);
                         j--;
-                        Nave.Bullets.RemoveAt(i);
-                        i--;
 
-                        // Adiciona pontos
-                        game.player.Score += 10;
-
-                        if (game.player.Score > limitSpeed)
-                        {
-                            limitSpeed += 100;
-                            AsteroidRock.Speed += 1;
-                            AsteroidRock.Count += 1;
-                            Nave.Speed += 1;                            
-                        }
-
-                        // Sai do loop interno
+                        Nave.Bullet.Bullets.Remove(bullet);                        
+                        
+                        game.player.UpdatePoints(AsteroidRock.Points);
+                        
                         break;
                     }
                 }
-
-                //// Remove os projéteis que saíram da tela
-                //if (bulletRectangles[i].Y < 0 && !acertou)
-                //{
-                //    bulletRectangles.RemoveAt(i);
-                //    i--;
-                //}
-            }            
+            });  
+            
+            UpdateDifficulty();
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -232,10 +140,16 @@ namespace Asteroid.Windows
             }
 
             // Desenha os asteroides
-            foreach (var bullet in Nave.Bullets)
+            foreach (var bullet in Nave.Bullet.Bullets)
             {
                 bullet.Texture = Nave.Bullet.Texture;
                 spriteBatch.DrawElement(bullet);
+            }
+
+            // Desenha os asteroides
+            foreach (var nave in NavesEnemy)
+            {                
+                spriteBatch.DrawElement(nave);
             }
 
             // Desenha a pontuação
@@ -243,6 +157,101 @@ namespace Asteroid.Windows
             spriteBatch.DrawText(TxtScore);
             
             game.spriteBatch = spriteBatch;
+        }
+
+        private void GameOver()
+        {            
+            game.currentScreen = new GameOver(game);
+            game.currentScreen.LoadContent();
+            return;
+        }
+        
+
+        private void UpdateDifficulty()
+        {            
+         
+            switch (GameLevel)
+            {
+                case EnumGameLevel.Level0:
+                    if (game.player.Score > 0)
+                    {                        
+                        AsteroidRock.Speed += 1;
+                        //AsteroidRock.Count += 1;
+                        NavesEnemy.Add(new Nave()
+                        {
+                            Width = 64,
+                            Heigth = 64,
+                            Speed = 5,
+                            Size = 64,                                                        
+                            Y = 0,
+                            X = game.graphics.PreferredBackBufferWidth / 2,
+                            Roatation = 180,
+                            Bullet = new Bullet()
+                            {
+                                Speed = 8,
+                                Width = 8,
+                                Heigth = 16,
+                                TimeBetweenShots = 300,
+                                Bullets = new List<Bullet>(),
+                            },
+                            Enemy = true,
+                            Texture = game.Content.Load<Texture2D>("images/inimiga")                            
+                        });
+                    }
+                    break;
+                case EnumGameLevel.Level1:
+                    if (game.player.Score > 200)
+                    {
+                        AsteroidRock.Speed += 1;
+                        AsteroidRock.Count += 1;
+                        Nave.Speed+= 1;
+                        //Naves inimigas
+                    }
+                    break;
+                case EnumGameLevel.Level2:
+                    if (game.player.Score > 350)
+                    {
+                        AsteroidRock.Speed += 1;
+                        AsteroidRock.Count += 1;
+                        //Fist boss
+                    }
+                    break;
+                case EnumGameLevel.Level3:
+                    if (game.player.Score > 450)
+                    {
+                        AsteroidRock.Speed += 1;
+                        AsteroidRock.Count += 1;
+                        //Naves inimigas
+                    }
+                    break;
+                case EnumGameLevel.Level4:
+                    if (game.player.Score > 600)
+                    {
+                        AsteroidRock.Speed += 1;
+                        AsteroidRock.Count += 1;
+                        Nave.Speed += 1;
+                        //boss
+                    }
+                    break;
+                case EnumGameLevel.Level5:
+                    if (game.player.Score > 750)
+                    {
+                        AsteroidRock.Speed += 1;
+                        AsteroidRock.Count += 1;                        
+                        //Naves inimigas
+                    }
+                    break;
+                case EnumGameLevel.Level6:
+                    if (game.player.Score > 1000)
+                    {
+                        AsteroidRock.Speed += 1;
+                        AsteroidRock.Count += 1;
+                        //ultimate boss
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

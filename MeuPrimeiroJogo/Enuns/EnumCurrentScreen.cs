@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asteroid.Models.Screens
+namespace Asteroid.Enuns
 {
     public enum EnumCurrentScreen
     {

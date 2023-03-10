@@ -38,7 +38,7 @@ namespace Asteroid.Helpers
 
         public static void DrawElement(this SpriteBatch spriteBatch, Element element)
         {
-            spriteBatch.Draw(element.Texture, element.Rectangle, element.Color);
+            spriteBatch.Draw(element.Texture, element.Rectangle, element.Color);            
         }
 
         public static void DrawText(this SpriteBatch spriteBatch, Text text)
