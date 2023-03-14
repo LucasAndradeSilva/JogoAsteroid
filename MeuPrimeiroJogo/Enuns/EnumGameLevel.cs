@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace Asteroid.Enuns
 {
     public enum EnumGameLevel
-    {
-        Level0, 
+    {     
         Level1,
         Level2,
         Level3,

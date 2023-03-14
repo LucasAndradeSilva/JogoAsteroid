@@ -209,14 +209,11 @@ namespace Asteroid.Windows
         {            
          
             switch (GameLevel)
-            {
-                case EnumGameLevel.Level0:                  
-                    break;
+            {              
                 case EnumGameLevel.Level1:
-                    if (game.player.Score > 200)
+                    if (game.player.Score > 100)
                     {
-                        AsteroidRock.Count = 2;
-                        Nave.Speed += 1;
+                        AsteroidRock.Count = 2;                        
 
                         //Naves inimigas
                         if (LimitNaves <= 3)
@@ -246,15 +243,19 @@ namespace Asteroid.Windows
                             LimitNaves++;
                         }
                     }
-                    break;
-                case EnumGameLevel.Level2:
+
                     if (game.player.Score > 400)
                     {
+                        LimitNaves = 0;
+                        GameLevel = EnumGameLevel.Level2;
+                    }
+
+                     break;
+                case EnumGameLevel.Level2:
+                    
                         AsteroidRock.Speed += 1;
                         AsteroidRock.Count = 3;
-
-                        LimitNaves = 0;
-
+                      
                         //Naves inimigas
                         if (LimitNaves <= 5)
                         {
@@ -282,14 +283,20 @@ namespace Asteroid.Windows
                             });
                             LimitNaves++;
                         }                        
+                   
+
+                    if (game.player.Score > 550)
+                    {
+                        LimitNaves = 0;
+                        GameLevel = EnumGameLevel.Level3;
                     }
                     break;
                 case EnumGameLevel.Level3:
-                    if (game.player.Score > 550)
-                    {                        
-                        AsteroidRock.Count = -1;
-                        LimitNaves = 0;
-                        if (LimitNaves < 1)
+                                       
+                    AsteroidRock.Count = -1;                    
+
+                    //Bosss
+                    if (LimitNaves < 1)
                         {
                             NavesEnemy.Add(new Nave()
                             {
@@ -315,8 +322,13 @@ namespace Asteroid.Windows
                             });
                             LimitNaves++;
                         }
-                        //Boss
+
+                    if (game.player.Score > 640)
+                    {
+                        LimitNaves = 0;
+                        GameLevel = EnumGameLevel.Level4;
                     }
+                    
                     break;
                 case EnumGameLevel.Level4:
                     if (game.player.Score > 600)
