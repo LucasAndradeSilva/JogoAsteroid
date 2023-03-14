@@ -22,6 +22,7 @@ namespace Asteroid.Models.Characters
         public int Size { get; set; } = 64;
         public int Life { get; set; } = 3;
         public int Points { get; set; } = 10;
+        public bool Enemy { get; set; } = false;
 
         public bool CheckCollision(Rectangle rectangleCollision)
         {

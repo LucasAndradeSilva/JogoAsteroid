@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Asteroid.Models.Elements;
 using Microsoft.Xna.Framework.Input;
+using Asteroid.Models.Characters;
 
 namespace Asteroid.Helpers
 {
@@ -41,6 +42,7 @@ namespace Asteroid.Helpers
             spriteBatch.Draw(element.Texture, element.Rectangle, element.Color);            
         }
 
+ 
         public static void DrawText(this SpriteBatch spriteBatch, Text text)
         {
             spriteBatch.DrawString(text.SpriteFont, text.Content, text.Vector, text.Color, text.Roatation, text.Origin, text.Scale, text.SpriteEffects, text.LayerDepth);
