@@ -29,7 +29,12 @@ namespace Asteroid.Windows
         AsteroidRock AsteroidRock;
         #endregion
 
-        private EnumGameLevel GameLevel { get; set; }        
+
+        #region Difficulty
+        private int LimitNaves = 0;
+        private EnumGameLevel GameLevel { get; set; }
+
+        #endregion
 
         public GameScreen(AsteroidGame game) : base(game) {
             Nave = new Nave()
@@ -52,7 +57,7 @@ namespace Asteroid.Windows
             AsteroidRock = new AsteroidRock()
             {
                 Count = 3,
-                Speed = 4,
+                Speed = 1,
                 Size = 44,
                 Asteroids = new List<AsteroidRock>()
             };
@@ -199,24 +204,27 @@ namespace Asteroid.Windows
             game.currentScreen.LoadContent();
             return;
         }
-
-        int limitnaves = 2;
+        
         private void UpdateDifficulty()
         {            
          
             switch (GameLevel)
             {
-                case EnumGameLevel.Level0:
-                    if (game.player.Score > 0)
-                    {                        
-                        AsteroidRock.Speed += 1;
-                        //AsteroidRock.Count += 1;
-                        if (limitnaves <= 2)
+                case EnumGameLevel.Level0:                  
+                    break;
+                case EnumGameLevel.Level1:
+                    if (game.player.Score > 200)
+                    {
+                        AsteroidRock.Count = 2;
+                        Nave.Speed += 1;
+
+                        //Naves inimigas
+                        if (LimitNaves <= 3)
                         {
                             NavesEnemy.Add(new Nave()
                             {
                                 Points = 25,
-                                TimeBetweenMovement = 1,
+                                TimeBetweenMovement = 1500,
                                 Width = 64,
                                 Heigth = 64,
                                 Speed = 1,
@@ -235,33 +243,79 @@ namespace Asteroid.Windows
                                 Enemy = true,
                                 Texture = game.Content.Load<Texture2D>("images/inimiga")
                             });
-                            limitnaves++;
-                        }                       
-                    }
-                    break;
-                case EnumGameLevel.Level1:
-                    if (game.player.Score > 200)
-                    {
-                        AsteroidRock.Speed += 1;
-                        AsteroidRock.Count += 1;
-                        Nave.Speed+= 1;
-                        //Naves inimigas
+                            LimitNaves++;
+                        }
                     }
                     break;
                 case EnumGameLevel.Level2:
-                    if (game.player.Score > 350)
+                    if (game.player.Score > 400)
                     {
                         AsteroidRock.Speed += 1;
-                        AsteroidRock.Count += 1;
-                        //Fist boss
+                        AsteroidRock.Count = 3;
+
+                        LimitNaves = 0;
+
+                        //Naves inimigas
+                        if (LimitNaves <= 5)
+                        {
+                            NavesEnemy.Add(new Nave()
+                            {
+                                Points = 25,
+                                TimeBetweenMovement = 1500,
+                                Width = 64,
+                                Heigth = 64,
+                                Speed = 1,
+                                Size = 64,
+                                Y = 0,
+                                X = game.graphics.PreferredBackBufferWidth / 2,
+                                Roatation = 180,
+                                Bullet = new Bullet()
+                                {
+                                    Speed = 8,
+                                    Width = 8,
+                                    Heigth = 16,
+                                    TimeBetweenShots = 1000,
+                                    Bullets = new List<Bullet>(),
+                                },
+                                Enemy = true,
+                                Texture = game.Content.Load<Texture2D>("images/inimiga")
+                            });
+                            LimitNaves++;
+                        }                        
                     }
                     break;
                 case EnumGameLevel.Level3:
-                    if (game.player.Score > 450)
-                    {
-                        AsteroidRock.Speed += 1;
-                        AsteroidRock.Count += 1;
-                        //Naves inimigas
+                    if (game.player.Score > 550)
+                    {                        
+                        AsteroidRock.Count = -1;
+                        LimitNaves = 0;
+                        if (LimitNaves < 1)
+                        {
+                            NavesEnemy.Add(new Nave()
+                            {
+                                Points = 100,
+                                TimeBetweenMovement = 1500,
+                                Width = 128,
+                                Heigth = 128,
+                                Speed = 1,
+                                Size = 64,
+                                Y = 0,
+                                X = game.graphics.PreferredBackBufferWidth / 2,
+                                Roatation = 180,
+                                Bullet = new Bullet()
+                                {
+                                    Speed = 8,
+                                    Width = 8,
+                                    Heigth = 16,
+                                    TimeBetweenShots = 1000,
+                                    Bullets = new List<Bullet>(),
+                                },
+                                Enemy = true,
+                                Texture = game.Content.Load<Texture2D>("images/inimiga")
+                            });
+                            LimitNaves++;
+                        }
+                        //Boss
                     }
                     break;
                 case EnumGameLevel.Level4:

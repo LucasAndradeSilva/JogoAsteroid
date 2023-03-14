@@ -37,6 +37,7 @@ namespace Asteroid.Helpers
             return y;
         }
 
+
         public static void DrawElement(this SpriteBatch spriteBatch, Element element)
         {
             spriteBatch.Draw(element.Texture, element.Rectangle, element.Color);            

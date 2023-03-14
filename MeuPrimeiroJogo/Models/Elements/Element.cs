@@ -108,6 +108,12 @@ namespace Asteroid.Models.Elements
             this.Y = MathHelper.Clamp(this.Y, 0, graphics.PreferredBackBufferHeight - this.Heigth);
         }
 
+        public void ScreenLimit(int Width, int Heigth)
+        {
+            this.X = MathHelper.Clamp(this.X, 0, Width);
+            this.Y = MathHelper.Clamp(this.Y, 0, Heigth);
+        }
+
         public bool CheckLeftScreen(GraphicsDeviceManager graphics, EnumMovement movement,  Action CallBackAction)
         {
             if (movement == EnumMovement.Down) 
