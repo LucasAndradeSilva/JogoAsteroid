@@ -12,6 +12,7 @@ namespace Asteroid.Models.Characters.Asteroid
     public class AsteroidRock : Character
     {
         public int Count { get; set; }
+        public bool Destroyed { get; set; } = false;
         public List<AsteroidRock> Asteroids { get; set; }
 
         public void CreateAsteroid(GraphicsDeviceManager graphics)
@@ -25,7 +26,8 @@ namespace Asteroid.Models.Characters.Asteroid
                     X = random.Next(graphics.PreferredBackBufferWidth - 64),
                     Y = -64,
                     Width = this.Size,
-                    Heigth = this.Size
+                    Heigth = this.Size,
+                    Texture = this.Texture                    
                 };
 
                 this.Asteroids.Add(asteroid);

@@ -111,7 +111,7 @@ namespace Asteroid.Windows
             AsteroidRock.AsteroidMovement(game.graphics, (obj) =>
             {
                 var asteroid = obj as AsteroidRock;
-                if (asteroid.CheckCollision(Nave.Rectangle))
+                if (asteroid.CheckCollision(Nave.Rectangle) && !asteroid.Destroyed)
                 {
                     AsteroidRock.Asteroids.Remove(asteroid);
 
@@ -126,17 +126,14 @@ namespace Asteroid.Windows
 
             Nave.Bullet.BulletShootMovement(game.graphics, EnumMovement.Up, (obj) =>
             {
-                var hit = false;
                 var bullet = obj as Bullet;
 
                 for (int j = AsteroidRock.Asteroids.Count - 1; j >= 0; j--)
                 {
-                    if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle))
-                    {
-                        hit = true;
-                        
-                        AsteroidRock.Asteroids.RemoveAt(j);
-                        j--;
+                    if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle) && !AsteroidRock.Asteroids[j].Destroyed)
+                    {                                                
+                        AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("images/explosao");
+                        AsteroidRock.Asteroids[j].Destroyed = true;                        
 
                         Nave.Bullet.Bullets.Remove(bullet);                        
                         
@@ -176,7 +173,7 @@ namespace Asteroid.Windows
 
                         if (bullet.CheckCollision(Nave.Rectangle))
                         {
-                            Nave.Life.Lifes.RemoveAt(Nave.Life.Lifes.Count);
+                            Nave.Life.Lifes.RemoveAt(0);
 
                             if (Nave.Life.Lifes.Count <= 0)                         
                                 GameOver();                            
@@ -213,7 +210,7 @@ namespace Asteroid.Windows
             // Desenha os asteroides                        
             foreach (var asteroid in AsteroidRock.Asteroids)
             {
-                asteroid.Texture = AsteroidRock.Texture;
+                //asteroid.Texture = AsteroidRock.Texture;
                 spriteBatch.DrawElement(asteroid);
             }
 
@@ -290,7 +287,7 @@ namespace Asteroid.Windows
                                 Texture = game.Content.Load<Texture2D>("images/inimiga")
                             };
 
-                            naveEnemy.Life.CreateLifes(2);
+                            naveEnemy.Life.CreateLifes(3);
 
                             NavesEnemy.Add(naveEnemy);
                             LimitNaves++;

@@ -58,7 +58,7 @@ namespace Asteroid.Models.Characters
                 lifeClone.Width = this.Width;
                 lifeClone.Heigth = this.Heigth;
                 lifeClone.Texture = this.Texture;
-
+            
                 Lifes.Add(lifeClone);
             }
         }
