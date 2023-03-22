@@ -13,6 +13,9 @@ using System.Drawing;
 using System.Diagnostics.Metrics;
 using Asteroid.Models.Players;
 using Asteroid.Enuns;
+using System.Threading;
+using Asteroid.Models.Characters;
+using System.Linq;
 
 namespace Asteroid.Windows
 {
@@ -45,6 +48,14 @@ namespace Asteroid.Windows
                 Size = 64,
                 Y = game.graphics.PreferredBackBufferHeight / 2,
                 X = game.graphics.PreferredBackBufferWidth / 2,
+                Life = new Life()
+                {
+                    Y = 10,
+                    X = game.graphics.PreferredBackBufferWidth,
+                    Width = 15,
+                    Heigth = 15,                                        
+                    Texture = game.Content.Load<Texture2D>("images/life")
+                },
                 Bullet = new Bullet()
                 {
                     Speed = 8,
@@ -54,6 +65,9 @@ namespace Asteroid.Windows
                     Bullets = new List<Bullet>(),
                 }                
             };
+
+            Nave.Life.CreateLifes(3);
+
             AsteroidRock = new AsteroidRock()
             {
                 Count = 3,
@@ -97,8 +111,15 @@ namespace Asteroid.Windows
             AsteroidRock.AsteroidMovement(game.graphics, (obj) =>
             {
                 var asteroid = obj as AsteroidRock;
-                if (asteroid.CheckCollision(Nave.Rectangle))                
-                    GameOver();                
+                if (asteroid.CheckCollision(Nave.Rectangle))
+                {
+                    AsteroidRock.Asteroids.Remove(asteroid);
+
+                    Nave.Life.Lifes.RemoveAt(0);
+
+                    if (Nave.Life.Lifes.Count <= 0)
+                        GameOver();
+                }
             });
 
             Nave.Bullet.BulletShoot(keyboardState, gameTime.ElapsedGameTime, Nave);
@@ -128,11 +149,16 @@ namespace Asteroid.Windows
                 for (int i = NavesEnemy.Count - 1; i >= 0; i--)
                 {
                     if (bullet.CheckCollision(NavesEnemy[i].Rectangle))
-                    {
-                        game.player.UpdatePoints(NavesEnemy[i].Points);
-                        NavesEnemy.RemoveAt(i);
-                        Nave.Bullet.Bullets.Remove(bullet);
-                        break;
+                    {                        
+                        NavesEnemy[i].Life.Lifes.RemoveAt(0);
+
+                        if (NavesEnemy[i].Life.Lifes.Count <= 0)
+                        {
+                            game.player.UpdatePoints(NavesEnemy[i].Points);
+                            NavesEnemy.RemoveAt(i);
+                            Nave.Bullet.Bullets.Remove(bullet);
+                            break;
+                        }                                                                        
                     }
                 }
             });
@@ -148,8 +174,13 @@ namespace Asteroid.Windows
                         var hit = false;
                         var bullet = obj as Bullet;
 
-                        if (bullet.CheckCollision(Nave.Rectangle))                        
-                            GameOver();                        
+                        if (bullet.CheckCollision(Nave.Rectangle))
+                        {
+                            Nave.Life.Lifes.RemoveAt(Nave.Life.Lifes.Count);
+
+                            if (Nave.Life.Lifes.Count <= 0)                         
+                                GameOver();                            
+                        }                       
                     });
                 });
             }
@@ -165,6 +196,20 @@ namespace Asteroid.Windows
             // Desenha o jogador
             spriteBatch.DrawElement(Nave);
 
+            // Desenha vidas
+            var naveBase = Nave.Life.Lifes.FirstOrDefault();
+            for (int i = 0; i < Nave.Life.Lifes.Count; i++)
+            {
+                if (!Nave.Life.Lifes[i].FisrtDraw)
+                {                      
+                    naveBase.X -= 20; 
+                    Nave.Life.Lifes[i].X = naveBase.X;
+                    Nave.Life.Lifes[i].FisrtDraw = true;
+                }                    
+
+                spriteBatch.DrawElement(Nave.Life.Lifes[i]);
+            }            
+            
             // Desenha os asteroides                        
             foreach (var asteroid in AsteroidRock.Asteroids)
             {
@@ -218,7 +263,7 @@ namespace Asteroid.Windows
                         //Naves inimigas
                         if (LimitNaves <= 3)
                         {
-                            NavesEnemy.Add(new Nave()
+                            var naveEnemy = new Nave()
                             {
                                 Points = 25,
                                 TimeBetweenMovement = 1500,
@@ -229,6 +274,10 @@ namespace Asteroid.Windows
                                 Y = 0,
                                 X = game.graphics.PreferredBackBufferWidth / 2,
                                 Roatation = 180,
+                                Life = new Life()
+                                {
+                                    Texture = game.Content.Load<Texture2D>("images/life")
+                                },
                                 Bullet = new Bullet()
                                 {
                                     Speed = 8,
@@ -239,7 +288,11 @@ namespace Asteroid.Windows
                                 },
                                 Enemy = true,
                                 Texture = game.Content.Load<Texture2D>("images/inimiga")
-                            });
+                            };
+
+                            naveEnemy.Life.CreateLifes(2);
+
+                            NavesEnemy.Add(naveEnemy);
                             LimitNaves++;
                         }
                     }
@@ -252,14 +305,12 @@ namespace Asteroid.Windows
 
                      break;
                 case EnumGameLevel.Level2:
-                    
-                        AsteroidRock.Speed += 1;
-                        AsteroidRock.Count = 3;
-                      
-                        //Naves inimigas
-                        if (LimitNaves <= 5)
+                    AsteroidRock.Count = 3;
+
+                    //Naves inimigas
+                    if (LimitNaves <= 5)
                         {
-                            NavesEnemy.Add(new Nave()
+                            var naveEnemy = new Nave()
                             {
                                 Points = 25,
                                 TimeBetweenMovement = 1500,
@@ -270,6 +321,10 @@ namespace Asteroid.Windows
                                 Y = 0,
                                 X = game.graphics.PreferredBackBufferWidth / 2,
                                 Roatation = 180,
+                                Life = new Life()
+                                {
+                                    Texture = game.Content.Load<Texture2D>("images/life")
+                                },
                                 Bullet = new Bullet()
                                 {
                                     Speed = 8,
@@ -280,12 +335,16 @@ namespace Asteroid.Windows
                                 },
                                 Enemy = true,
                                 Texture = game.Content.Load<Texture2D>("images/inimiga")
-                            });
+                            };
+
+                            naveEnemy.Life.CreateLifes(2);
+
+                            NavesEnemy.Add(naveEnemy);
                             LimitNaves++;
                         }                        
                    
 
-                    if (game.player.Score > 550)
+                    if (game.player.Score > 700)
                     {
                         LimitNaves = 0;
                         GameLevel = EnumGameLevel.Level3;
@@ -298,7 +357,7 @@ namespace Asteroid.Windows
                     //Bosss
                     if (LimitNaves < 1)
                         {
-                            NavesEnemy.Add(new Nave()
+                            var boss = new Nave()
                             {
                                 Points = 100,
                                 TimeBetweenMovement = 1500,
@@ -309,6 +368,10 @@ namespace Asteroid.Windows
                                 Y = 0,
                                 X = game.graphics.PreferredBackBufferWidth / 2,
                                 Roatation = 180,
+                                Life = new Life()
+                                {
+                                    Texture = game.Content.Load<Texture2D>("images/life")
+                                },
                                 Bullet = new Bullet()
                                 {
                                     Speed = 8,
@@ -319,11 +382,15 @@ namespace Asteroid.Windows
                                 },
                                 Enemy = true,
                                 Texture = game.Content.Load<Texture2D>("images/inimiga")
-                            });
+                            };
+
+                            boss.Life.CreateLifes(10);
+
+                            NavesEnemy.Add(boss);
                             LimitNaves++;
                         }
 
-                    if (game.player.Score > 640)
+                    if (game.player.Score > 790)
                     {
                         LimitNaves = 0;
                         GameLevel = EnumGameLevel.Level4;
