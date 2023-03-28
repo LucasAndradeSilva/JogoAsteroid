@@ -22,6 +22,8 @@ namespace Asteroid.Windows
      
         public StartScreen(AsteroidGame game) : base(game)
         {
+            game.Window.Title = "Inicio";                        
+
             BtnStart = new Button()
             {
                 X = game.graphics.GetCenterX(),

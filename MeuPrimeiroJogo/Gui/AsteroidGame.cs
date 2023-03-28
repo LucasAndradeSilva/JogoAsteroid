@@ -29,7 +29,13 @@ namespace Asteroid.Gui
             {
                 Name = "Guest"
             };
-            base.Initialize();
+
+			graphics.PreferredBackBufferWidth = 1000;
+			graphics.PreferredBackBufferHeight = 600;
+			graphics.IsFullScreen = false;
+			graphics.ApplyChanges();			
+
+			base.Initialize();
         }
 
         protected override void LoadContent()

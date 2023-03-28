@@ -50,14 +50,16 @@ namespace Asteroid.Models.Characters
 
         public void CreateLifes(int qtdLifes = 3)
         {
-            for (int i = 0; i <= qtdLifes; i++)
+            for (int i = 0; i < qtdLifes; i++)
             {
-                var lifeClone = this.MemberwiseClone() as Life;
-                lifeClone.X = this.X;
-                lifeClone.Y = this.Y;
-                lifeClone.Width = this.Width;
-                lifeClone.Heigth = this.Heigth;
-                lifeClone.Texture = this.Texture;
+                var lifeClone = new Life()
+                {
+                    X = this.X,
+                    Y = this.Y,
+                    Width = this.Width,
+                    Heigth = this.Heigth,
+                    Texture = this.Texture,
+                };          
             
                 Lifes.Add(lifeClone);
             }

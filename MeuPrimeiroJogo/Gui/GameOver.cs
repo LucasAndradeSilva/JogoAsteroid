@@ -22,7 +22,9 @@ namespace Asteroid.Windows
      
         public GameOver(AsteroidGame game) : base(game)
         {
-            BtnStart = new Button()
+			game.Window.Title = "Game Over";
+
+			BtnStart = new Button()
             {
                 X = game.graphics.GetCenterX(),
                 Y = game.graphics.GetCenterY() - 20,

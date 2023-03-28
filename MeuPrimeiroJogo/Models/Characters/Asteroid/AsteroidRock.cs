@@ -16,18 +16,18 @@ namespace Asteroid.Models.Characters.Asteroid
         public List<AsteroidRock> Asteroids { get; set; }
 
         public void CreateAsteroid(GraphicsDeviceManager graphics)
-        {
-            var random = new Random();
-
-            if (random.Next(100) < this.Count)
+        {            
+            if (Random.Shared.Next(100) < this.Count)
             {
+                this.Size = Random.Shared.Next(44, 74);
                 var asteroid = new AsteroidRock()
                 {
-                    X = random.Next(graphics.PreferredBackBufferWidth - 64),
-                    Y = -64,
+                    X = Random.Shared.Next(graphics.PreferredBackBufferWidth - 64),
+                    Y = -64,                    
                     Width = this.Size,
                     Heigth = this.Size,
-                    Texture = this.Texture                    
+					Points = Random.Shared.Next(8, 14),
+					Texture = this.Texture                    
                 };
 
                 this.Asteroids.Add(asteroid);

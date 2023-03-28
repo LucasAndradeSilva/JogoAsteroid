@@ -45,9 +45,8 @@ namespace Asteroid.Models.Characters.Nave
         }          
         
         public void AutoMovement(GraphicsDeviceManager graphics, TimeSpan ElapsedGameTime)
-        {
-            var random = new Random();
-            var randomNumber = random.Next(0, 7);
+        {            
+            var randomNumber = Random.Shared.Next(0, 7);
             var randomMoviment = (EnumMovement)randomNumber;
 
             if (this.ElapsedTimeSinceLastMovement >= this.TimeBetweenMovement)
@@ -66,7 +65,8 @@ namespace Asteroid.Models.Characters.Nave
                 this.Moviment(LastMoviment, this.Speed, graphics);
             }
 
-            var (width, heigth) = graphics.GetCenters();
+            var width = graphics.PreferredBackBufferWidth - 100;
+            var heigth = graphics.PreferredBackBufferHeight - 300;
             ScreenLimit(width, heigth);
         }
     }
