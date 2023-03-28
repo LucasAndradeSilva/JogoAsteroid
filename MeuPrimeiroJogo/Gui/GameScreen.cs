@@ -231,7 +231,7 @@ namespace Asteroid.Windows
 				});
 			}
 
-				UpdateDifficulty();
+			UpdateDifficulty();
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -248,7 +248,7 @@ namespace Asteroid.Windows
 				spriteBatch.DrawElement(Boss);
                 foreach (var bullet in Boss.Bullet.Bullets)
                 {
-					bullet.Texture = Boss.Bullet.Texture;
+					bullet.Texture = Nave.Bullet.Texture;
 					spriteBatch.DrawElement(bullet);
 				}
 			}				
@@ -312,7 +312,7 @@ namespace Asteroid.Windows
 			{				
 				nextDifficultyScore += Random.Shared.Next(50, 150);
 				
-				AsteroidRock.Count = Random.Shared.Next(1, 6);
+				AsteroidRock.Count = Random.Shared.Next(3, 6);
 				
 				if (NavesEnemy.Count < maxEnemyShips)
 				{                   
