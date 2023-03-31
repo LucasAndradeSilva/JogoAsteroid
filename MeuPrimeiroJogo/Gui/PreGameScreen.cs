@@ -66,7 +66,7 @@ namespace Asteroid.Gui
         public override void LoadContent()
         {
             Nave.Texture = game.Content.Load<Texture2D>("images/foguete");
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo");
+            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
             TxtCount.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
         }

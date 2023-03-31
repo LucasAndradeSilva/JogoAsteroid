@@ -53,7 +53,7 @@ namespace Asteroid.Windows
         public override void LoadContent()
         {         
             BtnStart.Texture = game.Content.Load<Texture2D>("images/btnStart");
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo");
+            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
 
             TxtStartTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
             TxtStartSubTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/arial");

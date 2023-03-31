@@ -105,7 +105,7 @@ namespace Asteroid.Windows
             Nave.Texture = NaveTexture;
             Nave.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
 
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo");
+            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
 
             HitNaveTexture = game.Content.Load<Texture2D>("images/hitNave");
@@ -334,9 +334,8 @@ namespace Asteroid.Windows
 		private void UpdateDifficulty()
 		{			
 			if (game.player.Score > nextDifficultyScore)
-			{				
-				nextDifficultyScore += Random.Shared.Next(50, 150);
-				
+			{				                
+				nextDifficultyScore += Random.Shared.Next(50, 150);				
 				AsteroidRock.Count = Random.Shared.Next(3, 6);
 				
 				if (NavesEnemy.Count < maxEnemyShips)
@@ -383,6 +382,7 @@ namespace Asteroid.Windows
                 //Random boss
                 if (Random.Shared.Next(0, 10) == 0 && Boss is null)
                 {
+                    UpdateBackgraund();
                     ClearAsteroids();
 
                     Boss = new Nave()
@@ -400,9 +400,9 @@ namespace Asteroid.Windows
                         Bullet = new Bullet()
                         {
                             Speed = 8,
-                            Width = 8,
-                            Heigth = 16,
-                            TimeBetweenShots = 700,
+                            Width = Random.Shared.Next(10, 16),
+                            Heigth = Random.Shared.Next(16, 24),
+                            TimeBetweenShots = Random.Shared.Next(700, 1000),
                             Bullets = new List<Bullet>(),
                         },
                         Enemy = true,
@@ -438,5 +438,20 @@ namespace Asteroid.Windows
         {
 			maxEnemyShips = 6;
 		}
+
+        int lastBackgroundNumber = 0;
+        private void UpdateBackgraund()
+        {
+            var currentNumber = Random.Shared.Next(1, 9);
+
+            while (lastBackgroundNumber == currentNumber)
+            {
+                currentNumber = Random.Shared.Next(1, 9);
+            }
+
+            lastBackgroundNumber = currentNumber;
+
+            Background.Texture = game.Content.Load<Texture2D>($"images/fundo{currentNumber}");
+        }
     }
 }
