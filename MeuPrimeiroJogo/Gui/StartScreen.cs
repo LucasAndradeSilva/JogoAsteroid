@@ -78,7 +78,7 @@ namespace Asteroid.Windows
             //Clique no botão
             BtnStart.Click(mouseState, () =>
             {
-                game.currentScreen = new GameScreen(game);
+                game.currentScreen = new PreGameScreen(game);
                 game.currentScreen.LoadContent();
             });         
         }

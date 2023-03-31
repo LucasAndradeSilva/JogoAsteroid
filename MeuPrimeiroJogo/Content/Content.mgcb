@@ -20,6 +20,13 @@
 /processorParam:TextureFormat=Compressed
 /build:fontes/arial.spritefont
 
+#begin fontes/super.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:fontes/super.spritefont
+
 #begin fontes/titulo.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

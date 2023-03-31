@@ -27,7 +27,7 @@ namespace Asteroid.Windows
 			BtnStart = new Button()
             {
                 X = game.graphics.GetCenterX(),
-                Y = game.graphics.GetCenterY() - 20,
+                Y = game.graphics.GetCenterY() + 40,
                 Width = 200,
                 Heigth = 100
             };
@@ -38,14 +38,14 @@ namespace Asteroid.Windows
             };
             TxtStartTitulo = new Text()
             {
-                X = game.graphics.GetCenterX() - 10,
-                Y = game.graphics.GetCenterY() - 80,
+                X = game.graphics.GetCenterX() - 355,
+                Y = game.graphics.GetCenterY() - 150,
                 Content = "Game Over"
             };
             TxtStartSubTitulo = new Text()
             {
                 X = game.graphics.GetCenterX(),
-                Y = game.graphics.GetCenterY() - 40,
+                Y = game.graphics.GetCenterY() + 20,
                 Content = $"{game.player.Name} sua pontuacao foi de {game.player.Score}"
             };
         }
@@ -55,7 +55,7 @@ namespace Asteroid.Windows
             BtnStart.Texture = game.Content.Load<Texture2D>("images/btnStart");
             Background.Texture = game.Content.Load<Texture2D>("images/fundo");
 
-            TxtStartTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
+            TxtStartTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
             TxtStartSubTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/arial");
 
             game.IsMouseVisible = true;
@@ -79,7 +79,7 @@ namespace Asteroid.Windows
             BtnStart.Click(mouseState, () =>
             {
                 game.player.Score = 0;
-                game.currentScreen = new GameScreen(game);
+                game.currentScreen = new PreGameScreen(game);
                 game.currentScreen.LoadContent();
             });         
         }
