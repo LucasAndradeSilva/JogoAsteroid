@@ -1,5 +1,7 @@
 ﻿using Asteroid.Enuns;
+using Asteroid.Gui;
 using Asteroid.Helpers;
+using Asteroid.Models.Characters.Game;
 using Asteroid.Models.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,6 +22,7 @@ namespace Asteroid.Models.Characters.Nave
         public int TimeBetweenMovement { get; set; }
         public int ElapsedDirection { get; set; }
         public Bullet Bullet { get; set; }
+        public List<PowerUp> Powers { get; set; }
 
         private EnumMovement LastMoviment = (EnumMovement)(new Random().Next(0,7));
 
@@ -32,6 +35,25 @@ namespace Asteroid.Models.Characters.Nave
             else
             {
                 return this.TextureName;
+            }
+        }
+
+        public void Initialize(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
+        {
+            PlayerUsePowerUp(keyboardState, gameScreen);
+            PlayerMovement(keyboardState, graphics);
+            CheckUnhit(texture, gameTime.ElapsedGameTime);
+        }
+
+        public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreen gameScreen)
+        {
+            if (keyboardState.IsKeyDown(Keys.X))
+            {
+                if (Powers.Count > 0 && !Powers.Any(x => x.Using))
+                {
+                    Powers.FirstOrDefault().UsePowerUp(this, gameScreen);
+                    Powers.RemoveAt(0);
+                }
             }
         }
 

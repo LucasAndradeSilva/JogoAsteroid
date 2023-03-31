@@ -26,6 +26,7 @@ namespace Asteroid.Models.Characters
         public Life Life { get; set; }
         public int Points { get; set; } = 10;
         public bool Enemy { get; set; } = false;
+        public bool Destroyed { get; set; } = false;
         public bool IsEnemy { get; set; }
         public bool IsHited { get; set; } = false;
         public int TimeBetweenHit { get; set; } = 1200;

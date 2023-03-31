@@ -17,7 +17,7 @@ using Asteroid.Models.Characters;
 using System.Linq;
 using Asteroid.Models.Characters.Game;
 
-namespace Asteroid.Windows
+namespace Asteroid.Gui
 {
     public class GameScreen : Screen
     {
@@ -30,6 +30,7 @@ namespace Asteroid.Windows
         Nave Nave;
 		Nave Boss;
         List<Nave> NavesEnemy = new List<Nave>();
+        List<PowerUp> PowerUps = new List<PowerUp>();
         AsteroidRock AsteroidRock;
         #endregion
 
@@ -39,6 +40,12 @@ namespace Asteroid.Windows
         Texture2D HitNaveTexture;        
         Texture2D HitEnemyTexture;
         Texture2D LifeTexture;
+        Texture2D BossTexture { 
+            get
+            {
+                return game.Content.Load<Texture2D>(Boss.TextureName);
+            }
+        }
         #endregion
 
         #region Difficulty        
@@ -53,7 +60,7 @@ namespace Asteroid.Windows
         public GameScreen(AsteroidGame game) : base(game) {
 			game.Window.Title = "Asteroid Game";
 
-			Nave = new Nave()
+            Nave = new Nave()
             {
                 Width = 64,
                 Heigth = 64,
@@ -66,7 +73,7 @@ namespace Asteroid.Windows
                     Y = 10,
                     X = game.graphics.PreferredBackBufferWidth,
                     Width = 15,
-                    Heigth = 15,                                        
+                    Heigth = 15,
                     Texture = game.Content.Load<Texture2D>("images/life")
                 },
                 Bullet = new Bullet()
@@ -76,7 +83,8 @@ namespace Asteroid.Windows
                     Heigth = 16,
                     TimeBetweenShots = 300,
                     Bullets = new List<Bullet>(),
-                }                
+                },
+                Powers = new List<PowerUp>()
             };
 
             Nave.Life.CreateLifes(4);
@@ -123,9 +131,8 @@ namespace Asteroid.Windows
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
 
-            Nave.CheckUnhit(NaveTexture, gameTime.ElapsedGameTime);
-            Nave.PlayerMovement(keyboardState, game.graphics);
-
+            Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime);            
+            
             AsteroidRock.CreateAsteroid(game.graphics);
 
             AsteroidRock.AsteroidMovement(game.graphics, (obj) =>
@@ -144,7 +151,6 @@ namespace Asteroid.Windows
             });
 
             Nave.Bullet.BulletShoot(keyboardState, gameTime.ElapsedGameTime, Nave);
-
             Nave.Bullet.BulletShootMovement(game.graphics, EnumMovement.Up, (obj) =>
             {
                 var bullet = obj as Bullet;
@@ -176,6 +182,7 @@ namespace Asteroid.Windows
                         if (NavesEnemy[i].Life.Lifes.Count <= 0)
                         {
                             game.player.UpdatePoints(NavesEnemy[i].Points);
+                            CheckPowerUp(NavesEnemy[i].Rectangle);
                             NavesEnemy.RemoveAt(i);                            
                         }
 
@@ -198,14 +205,15 @@ namespace Asteroid.Windows
 							game.player.UpdatePoints(Boss.Points);
 						
 							Nave.Bullet.Bullets.Remove(bullet);
-
-                            Boss = null;
-
+                           
+                            CheckPowerUp(Boss.Rectangle);
                             ResetAsteroids();
                             UpdateHardDiffculty();
+
+                            Boss = default;
                         }
 
-						Nave.Bullet.Bullets.Remove(bullet);                       
+                        Nave.Bullet.Bullets.Remove(bullet);                       
 					}
                 }
             });
@@ -238,8 +246,8 @@ namespace Asteroid.Windows
 
             //Verifica se boss me atingiu
             if (Boss is not null)
-            {
-                Boss.CheckUnhit(EnemyTexture, gameTime.ElapsedGameTime);
+            {                
+                Boss.CheckUnhit(BossTexture, gameTime.ElapsedGameTime);
                 Boss.AutoMovement(game.graphics, gameTime.ElapsedGameTime);
 				Boss.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, Boss);
 				Boss.Bullet.BulletShootMovement(game.graphics, EnumMovement.Down, (obj) =>
@@ -258,6 +266,28 @@ namespace Asteroid.Windows
 					}
 				});
 			}
+
+            if (PowerUps.Count > 0)
+            {
+                for (int i = 0; i < PowerUps.Count; i++)
+                {
+                    PowerUps[i].Moviment(EnumMovement.Down, PowerUps[i].Speed, game.graphics);
+
+                    if (PowerUps[i].CheckCollision(Nave.Rectangle))
+                    {
+                        Nave.Powers.Add(PowerUps[i]);
+                        PowerUps.RemoveAt(0);
+                    }
+                    else
+                    {
+                        PowerUps[i].CheckLeftScreen(game.graphics, EnumMovement.Down, () =>
+                        {
+                            PowerUps.RemoveAt(0);
+                        });
+                    }
+                }
+            
+            }
 
 			UpdateDifficulty();
         }
@@ -318,6 +348,12 @@ namespace Asteroid.Windows
                     bullet.Texture = Nave.Bullet.Texture;
                     spriteBatch.DrawElement(bullet);
                 }
+            }
+
+            // Desenha power up
+            foreach (var power in PowerUps)
+            {
+                spriteBatch.DrawElement(power);
             }
 
             // Desenha a pontuação
@@ -464,6 +500,17 @@ namespace Asteroid.Windows
             lastBackgroundNumber = currentNumber;
 
             Background.Texture = game.Content.Load<Texture2D>($"images/fundo{currentNumber}");
+        }
+        private void CheckPowerUp(Microsoft.Xna.Framework.Rectangle position)
+        {
+            var powerup = PowerUp.GeneretPowerUp();
+            if (powerup is not null)
+            {
+                powerup.X = position.X;
+                powerup.Y = position.Y;
+                powerup.Texture = game.Content.Load<Texture2D>(powerup.TextureName);
+                PowerUps.Add(powerup);
+            }                
         }
     }
 }

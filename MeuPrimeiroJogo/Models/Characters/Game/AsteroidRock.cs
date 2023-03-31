@@ -11,8 +11,7 @@ namespace Asteroid.Models.Characters.Game
 {
     public class AsteroidRock : Character
     {
-        public int Count { get; set; }
-        public bool Destroyed { get; set; } = false;
+        public int Count { get; set; }        
         public List<AsteroidRock> Asteroids { get; set; }
 
         public void CreateAsteroid(GraphicsDeviceManager graphics)

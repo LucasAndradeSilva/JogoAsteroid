@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using Asteroid.Models.Screens;
 using Asteroid.Gui;
 
-namespace Asteroid.Windows
+namespace Asteroid.Gui
 {
     public class GameOver : Screen
     {        
