@@ -101,7 +101,6 @@ namespace Asteroid.Windows
             };
             
         }
-
         public override void LoadContent()
         {
             NaveTexture = game.Content.Load<Texture2D>("images/foguete");
@@ -119,7 +118,6 @@ namespace Asteroid.Windows
             LifeTexture = game.Content.Load<Texture2D>("images/life");
             EnemyTexture = game.Content.Load<Texture2D>("images/inimiga");
         }
-
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
@@ -263,7 +261,6 @@ namespace Asteroid.Windows
 
 			UpdateDifficulty();
         }
-
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
         {            
             // Desenha o fundo
@@ -329,7 +326,6 @@ namespace Asteroid.Windows
             
             game.spriteBatch = spriteBatch;
         }
-
         private void GameOver()
         {            
             game.currentScreen = new GameOver(game);
@@ -438,7 +434,6 @@ namespace Asteroid.Windows
                 limitEnemyShips = 1;
             }
         }
-
 		private void ClearAsteroids()
 		{
 			AsteroidRock.Asteroids.Clear();
@@ -453,12 +448,10 @@ namespace Asteroid.Windows
             NavesEnemy.Clear();
 			maxEnemyShips = 0;
 		}
-
         private void ResetNavesEnemy()
         {
 			maxEnemyShips = 6;
 		}
-
         private void UpdateBackgraund()
         {
             var currentNumber = Random.Shared.Next(1, 9);
