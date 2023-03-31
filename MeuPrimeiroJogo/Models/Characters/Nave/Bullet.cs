@@ -1,5 +1,5 @@
 ﻿using Asteroid.Enuns;
-using Asteroid.Models.Characters.Asteroid;
+using Asteroid.Models.Characters.Game;
 using Asteroid.Models.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;

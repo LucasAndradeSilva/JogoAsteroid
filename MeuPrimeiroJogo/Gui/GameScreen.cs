@@ -1,5 +1,4 @@
-﻿using Asteroid.Models.Characters.Asteroid;
-using Asteroid.Models.Characters.Nave;
+﻿using Asteroid.Models.Characters.Nave;
 using Asteroid.Models.Elements;
 using Asteroid.Helpers;
 using Microsoft.Xna.Framework;
@@ -16,6 +15,7 @@ using Asteroid.Enuns;
 using System.Threading;
 using Asteroid.Models.Characters;
 using System.Linq;
+using Asteroid.Models.Characters.Game;
 
 namespace Asteroid.Windows
 {
@@ -33,9 +33,16 @@ namespace Asteroid.Windows
         AsteroidRock AsteroidRock;
         #endregion
 
+        #region Textures
+        Texture2D NaveTexture;
+        Texture2D EnemyTexture;
+        Texture2D HitNaveTexture;        
+        Texture2D HitEnemyTexture;
+        Texture2D LifeTexture;
+        #endregion
 
         #region Difficulty        
-		private int nextDifficultyScore = 50;
+        private int nextDifficultyScore = 50;
 		private int maxEnemyShips = 12;		
         #endregion
 
@@ -92,20 +99,29 @@ namespace Asteroid.Windows
         }
 
         public override void LoadContent()
-        {            
+        {
+            NaveTexture = game.Content.Load<Texture2D>("images/foguete");
             AsteroidRock.Texture = game.Content.Load<Texture2D>("images/asteroid");
-            Nave.Texture = game.Content.Load<Texture2D>("images/foguete");
+            Nave.Texture = NaveTexture;
             Nave.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
 
             Background.Texture = game.Content.Load<Texture2D>("images/fundo");
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
+
+            HitNaveTexture = game.Content.Load<Texture2D>("images/hitNave");
+
+            HitEnemyTexture = game.Content.Load<Texture2D>("images/inimigaHit");
+
+            LifeTexture = game.Content.Load<Texture2D>("images/life");
+            EnemyTexture = game.Content.Load<Texture2D>("images/inimiga");
         }
 
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
-           
+
+            Nave.CheckUnhit(NaveTexture, gameTime.ElapsedGameTime);
             Nave.PlayerMovement(keyboardState, game.graphics);
 
             AsteroidRock.CreateAsteroid(game.graphics);
@@ -118,6 +134,7 @@ namespace Asteroid.Windows
                     AsteroidRock.Asteroids.Remove(asteroid);
 
                     Nave.Life.Lifes.RemoveAt(0);
+                    Nave.Hit(HitNaveTexture);
 
                     if (Nave.Life.Lifes.Count <= 0)
                         GameOver();
@@ -152,6 +169,7 @@ namespace Asteroid.Windows
                     if (bullet.CheckCollision(NavesEnemy[i].Rectangle))
                     {                        
                         NavesEnemy[i].Life.Lifes.RemoveAt(0);
+                        NavesEnemy[i].Hit(HitEnemyTexture);
 
                         if (NavesEnemy[i].Life.Lifes.Count <= 0)
                         {
@@ -171,6 +189,7 @@ namespace Asteroid.Windows
 					if (bullet.CheckCollision(Boss.Rectangle))
                     {
                         Boss.Life.Lifes.RemoveAt(0);
+                        Boss.Hit(game.Content.Load<Texture2D>(Boss.GetTextureHit()));
 
 						if (Boss.Life.Lifes.Count <= 0)
 						{
@@ -193,16 +212,17 @@ namespace Asteroid.Windows
             {
                 NavesEnemy.ForEach((enemy) =>
                 {
+                    enemy.CheckUnhit(EnemyTexture, gameTime.ElapsedGameTime);
                     enemy.AutoMovement(game.graphics, gameTime.ElapsedGameTime);
                     enemy.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, enemy);
                     enemy.Bullet.BulletShootMovement(game.graphics, EnumMovement.Down, (obj) =>
-                    {
-                        var hit = false;
+                    {                        
                         var bullet = obj as Bullet;
 
                         if (bullet.CheckCollision(Nave.Rectangle))
                         {
                             Nave.Life.Lifes.RemoveAt(0);
+                            Nave.Hit(HitNaveTexture);
 
                             if (Nave.Life.Lifes.Count <= 0)                         
                                 GameOver();                            
@@ -214,18 +234,19 @@ namespace Asteroid.Windows
             //Verifica se boss me atingiu
             if (Boss is not null)
             {
+                Boss.CheckUnhit(EnemyTexture, gameTime.ElapsedGameTime);
                 Boss.AutoMovement(game.graphics, gameTime.ElapsedGameTime);
 				Boss.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, Boss);
 				Boss.Bullet.BulletShootMovement(game.graphics, EnumMovement.Down, (obj) =>
-				{
-					var hit = false;
+				{					
 					var bullet = obj as Bullet;
 
 					if (bullet.CheckCollision(Nave.Rectangle))
 					{
 						Nave.Life.Lifes.RemoveAt(0);
+                        Nave.Hit(HitNaveTexture);
 
-						if (Nave.Life.Lifes.Count <= 0)
+                        if (Nave.Life.Lifes.Count <= 0)
 							GameOver();
 					}
 				});
@@ -331,7 +352,7 @@ namespace Asteroid.Windows
 								Roatation = 180,
 								Life = new Life()
 								{
-									Texture = game.Content.Load<Texture2D>("images/life")
+									Texture = LifeTexture
 								},
 								Bullet = new Bullet()
 								{
@@ -342,8 +363,8 @@ namespace Asteroid.Windows
 									Bullets = new List<Bullet>(),
 								},
 								Enemy = true,
-								Texture = game.Content.Load<Texture2D>("images/inimiga")
-							};
+								Texture = EnemyTexture
+                            };
 
                             naveEnemy.Size = Random.Shared.Next(64, 84);
                             naveEnemy.Width = naveEnemy.Size;
@@ -358,33 +379,34 @@ namespace Asteroid.Windows
                 //Random boss
                 if (Random.Shared.Next(0, 10) == 0 && Boss is null)
                 {
-                    ClearAsteroids();                    
+                    ClearAsteroids();
 
-					Boss = new Nave()
-					{
-						Points = Random.Shared.Next(50, 120),
-						TimeBetweenMovement = Random.Shared.Next(1500, 2000),						
-						Speed = Random.Shared.Next(3, 5),						
-						Y = 0,
-						X = Random.Shared.Next(game.graphics.PreferredBackBufferWidth),
-						Roatation = 180,
-						Life = new Life()
-						{
-							Texture = game.Content.Load<Texture2D>("images/life")
-						},
-						Bullet = new Bullet()
-						{
-							Speed = 8,
-							Width = 8,
-							Heigth = 16,
-							TimeBetweenShots = 700,
-							Bullets = new List<Bullet>(),
-						},
-						Enemy = true,
-						Texture = game.Content.Load<Texture2D>($"images/boss{Random.Shared.Next(1, 5)}")
+                    Boss = new Nave()
+                    {
+                        Points = Random.Shared.Next(50, 120),
+                        TimeBetweenMovement = Random.Shared.Next(1500, 2000),
+                        Speed = Random.Shared.Next(3, 5),
+                        Y = 0,
+                        X = Random.Shared.Next(game.graphics.PreferredBackBufferWidth),
+                        Roatation = 180,
+                        Life = new Life()
+                        {
+                            Texture = LifeTexture
+                        },
+                        Bullet = new Bullet()
+                        {
+                            Speed = 8,
+                            Width = 8,
+                            Heigth = 16,
+                            TimeBetweenShots = 700,
+                            Bullets = new List<Bullet>(),
+                        },
+                        Enemy = true,
+                        TextureName = $"images/boss{Random.Shared.Next(1, 5)}",                        
 					};
 
-					Boss.Size = Random.Shared.Next(100, 150);
+                    Boss.Texture = game.Content.Load<Texture2D>(Boss.TextureName);
+                    Boss.Size = Random.Shared.Next(100, 150);
 					Boss.Width = Boss.Size;
 					Boss.Heigth = Boss.Size;
 

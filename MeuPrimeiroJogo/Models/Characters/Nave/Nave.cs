@@ -2,6 +2,7 @@
 using Asteroid.Helpers;
 using Asteroid.Models.Elements;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,18 @@ namespace Asteroid.Models.Characters.Nave
         public Bullet Bullet { get; set; }
 
         private EnumMovement LastMoviment = (EnumMovement)(new Random().Next(0,7));
+
+        public string GetTextureHit()
+        {
+            if (!IsHited)
+            {
+                return $"{this.TextureName}Hit";
+            }
+            else
+            {
+                return this.TextureName;
+            }
+        }
 
         public void PlayerMovement(KeyboardState keyboardState, GraphicsDeviceManager graphics)
         {
