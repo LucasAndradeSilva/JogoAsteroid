@@ -224,6 +224,8 @@ namespace Asteroid.Windows
                             Nave.Life.Lifes.RemoveAt(0);
                             Nave.Hit(HitNaveTexture);
 
+                            enemy.Bullet.Bullets.Remove(bullet);
+
                             if (Nave.Life.Lifes.Count <= 0)                         
                                 GameOver();                            
                         }                       
@@ -245,6 +247,8 @@ namespace Asteroid.Windows
 					{
 						Nave.Life.Lifes.RemoveAt(0);
                         Nave.Hit(HitNaveTexture);
+
+                        Boss.Bullet.Bullets.Remove(bullet);
 
                         if (Nave.Life.Lifes.Count <= 0)
 							GameOver();
