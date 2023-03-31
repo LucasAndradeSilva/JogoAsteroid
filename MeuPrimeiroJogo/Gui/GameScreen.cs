@@ -43,7 +43,11 @@ namespace Asteroid.Windows
 
         #region Difficulty        
         private int nextDifficultyScore = 50;
-		private int maxEnemyShips = 12;		
+		private int limitEnemyShips = 12; 
+        private int maxEnemyShips = 6;
+        private int maxRock = 6;
+        int lastBackgroundNumber = 0;
+
         #endregion
 
         public GameScreen(AsteroidGame game) : base(game) {
@@ -199,8 +203,9 @@ namespace Asteroid.Windows
 
                             Boss = null;
 
-                            ResetAsteroids();                            
-						}
+                            ResetAsteroids();
+                            UpdateHardDiffculty();
+                        }
 
 						Nave.Bullet.Bullets.Remove(bullet);                       
 					}
@@ -336,13 +341,13 @@ namespace Asteroid.Windows
 			if (game.player.Score > nextDifficultyScore)
 			{				                
 				nextDifficultyScore += Random.Shared.Next(50, 150);				
-				AsteroidRock.Count = Random.Shared.Next(3, 6);
+				AsteroidRock.Count = Random.Shared.Next(3, maxRock);
 				
-				if (NavesEnemy.Count < maxEnemyShips)
+				if (NavesEnemy.Count < limitEnemyShips)
 				{                   
 					if (Random.Shared.Next(0, 2) == 0)
 					{
-                        var navesQtd = Random.Shared.Next(1, 6);
+                        var navesQtd = Random.Shared.Next(1, maxEnemyShips);
                         for (int i = 0; i < navesQtd; i++)
                         {
 							var naveEnemy = new Nave()
@@ -418,6 +423,21 @@ namespace Asteroid.Windows
 				}
 			}		
 		}
+        private void UpdateHardDiffculty()
+        {
+            var random = Random.Shared.Next(1, 10);
+            if (random == 1)
+            {
+                maxRock += 1;
+            }
+
+            random = Random.Shared.Next(1, 10);
+            if (random == 1)
+            {
+                maxEnemyShips += 1;
+                limitEnemyShips = 1;
+            }
+        }
 
 		private void ClearAsteroids()
 		{
@@ -439,7 +459,6 @@ namespace Asteroid.Windows
 			maxEnemyShips = 6;
 		}
 
-        int lastBackgroundNumber = 0;
         private void UpdateBackgraund()
         {
             var currentNumber = Random.Shared.Next(1, 9);
