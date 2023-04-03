@@ -257,7 +257,7 @@ namespace Asteroid.Gui
                 Boss.CheckUnhit(BossTexture, gameTime.ElapsedGameTime);
                 Boss.AutoMovement(game.graphics, gameTime.ElapsedGameTime);
 				Boss.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, Boss);
-				Boss.Bullet.BulletShootMovement(game.graphics, EnumMovement.Down, (obj) =>
+				Boss.Bullet.BulletShootMovement(game.graphics, (obj) =>
 				{					
 					var bullet = obj as Bullet;
 
@@ -469,6 +469,7 @@ namespace Asteroid.Gui
                             Bullets = new List<Bullet>(),
                         },
                         Enemy = true,
+                        IsBoss = true,
                         TextureName = $"images/boss{Random.Shared.Next(1, 5)}",                        
 					};
 
@@ -477,7 +478,7 @@ namespace Asteroid.Gui
 					Boss.Width = Boss.Size;
 					Boss.Heigth = Boss.Size;
 
-					Boss.Life.CreateLifes(Random.Shared.Next(10, 15));
+					Boss.Life.CreateLifes(Random.Shared.Next(15, 20));
 				}
 			}		
 		}

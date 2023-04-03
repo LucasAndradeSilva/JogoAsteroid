@@ -21,6 +21,7 @@ namespace Asteroid.Models.Characters.Nave
         public int ElapsedTimeSinceLastMovement { get; set; }
         public int TimeBetweenMovement { get; set; }
         public int ElapsedDirection { get; set; }
+        public bool IsBoss { get; set; }
         public Bullet Bullet { get; set; }
         public List<PowerUp> Powers { get; set; }
 

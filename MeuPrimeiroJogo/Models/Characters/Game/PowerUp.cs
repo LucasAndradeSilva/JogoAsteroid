@@ -23,22 +23,22 @@ namespace Asteroid.Models.Characters.Game
         public static PowerUp GeneretPowerUp()
         {
             var typePower = EnumPowerUpType.Nada;
-            var group = Random.Shared.Next(1, 2);
+            var group = Random.Shared.Next(1, 4);
             var probability = Random.Shared.Next(0, 100);
 
             if (group == 1)
-            {                
-                if (probability <= 20)
-                {
-                    typePower = (EnumPowerUpType)Random.Shared.Next(3, 3);
-                }                
-            }
-            else
-            {             
-                if (probability <= 7)
+            {
+                if (probability <= 10)
                 {
                     typePower = (EnumPowerUpType)Random.Shared.Next(4, 7);
                 }
+            }
+            else
+            {
+                if (probability <= 15)
+                {
+                    typePower = (EnumPowerUpType)Random.Shared.Next(1, 3);
+                }                
             }
 
             if (typePower != EnumPowerUpType.Nada)
@@ -106,6 +106,11 @@ namespace Asteroid.Models.Characters.Game
 
     public class ShieldUp : PowerUp
     {
+        public ShieldUp()
+        {
+            TimeDisabledPower = 15000;
+        }
+
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
             nave.Immune = true;
@@ -126,16 +131,17 @@ namespace Asteroid.Models.Characters.Game
     }
 
     public class VelocityUp : PowerUp
-    {
+    { 
+
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            nave.Speed += 10;
+            nave.Speed += 8;
             Using = true;
         }
 
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            nave.Speed -= 10;
+            nave.Speed -= 8;
             Using = false;
         }
     }
@@ -154,10 +160,15 @@ namespace Asteroid.Models.Characters.Game
 
     public class FireUp : PowerUp
     {
+        public FireUp()
+        {
+            TimeDisabledPower = 10000;   
+        }
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
-        {            
-            nave.Bullet.Width = 100;
-            nave.Bullet.TimeBetweenShots = 0;
+        {
+            nave.Bullet.Heigth = 80;
+            nave.Bullet.Width = 60;
+            nave.Bullet.TimeBetweenShots = 50;
             Using = true;
         }
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)

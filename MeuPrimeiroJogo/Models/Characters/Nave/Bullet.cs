@@ -12,7 +12,8 @@ using System.Threading.Tasks;
 namespace Asteroid.Models.Characters.Nave
 {
     public class Bullet : Character
-    {       
+    {
+        public EnumMovement Movement { get; set; }
         public int ElapsedTimeSinceLastShot { get; set; }
         public int TimeBetweenShots { get; set; }
         public List<Bullet> Bullets { get; set; }
@@ -34,7 +35,8 @@ namespace Asteroid.Models.Characters.Nave
                 X = X + Width / 2 - 4,
                 Y = Y,
                 Width = this.Width,
-                Heigth = this.Heigth
+                Heigth = this.Heigth,
+                Movement = RandomMovimentExceptDown()                
             };
 
             this.Bullets.Add(bullet);
@@ -45,7 +47,7 @@ namespace Asteroid.Models.Characters.Nave
         {
             if (this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
             {
-                BulletShoot(nave.X, nave.Y, nave.Width);
+                CheckShoot(nave);
             }
             else
             {
@@ -69,6 +71,65 @@ namespace Asteroid.Models.Characters.Nave
 
                 if (!exitedScreen)
                     CallBackAction(bullet);
+            }
+        }
+
+        public void BulletShootMovement(GraphicsDeviceManager graphics, Action<dynamic> CallBackAction)
+        {
+            for (int i = this.Bullets.Count - 1; i >= 0; i--)
+            {
+                var bullet = this.Bullets[i];
+
+                this.Bullets[i].Moviment(bullet.Movement, bullet.Speed, graphics);
+
+                var exitedScreen = this.Bullets[i].CheckLeftScreen(graphics, bullet.Movement, () =>
+                {
+                    this.Bullets.RemoveAt(i);
+                    i--;
+                });
+
+                if (!exitedScreen)
+                    CallBackAction(bullet);
+            }
+        }
+
+
+        public EnumMovement RandomMovimentExceptDown()
+        {
+            var movement = EnumMovement.Down;
+            var found = false;
+            while (!found)
+            {
+                movement = (EnumMovement)Random.Shared.Next(0, 7);
+                if (movement == EnumMovement.Up || movement == EnumMovement.LeftUp || movement == EnumMovement.RightUp || movement == EnumMovement.Right || movement == EnumMovement.Left)
+                {
+                    found = false;
+                }
+                else
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            return movement;
+        }
+
+        private void CreateShoots(int qtdShoots, Nave nave)
+        {
+            for (int i = 0; i < qtdShoots; i++)            
+                BulletShoot(nave.X, nave.Y, nave.Width);            
+        }
+        
+        public void CheckShoot(Nave nave)
+        {
+            if (nave.IsBoss)
+            {
+                CreateShoots(Random.Shared.Next(1, 4), nave);
+            }
+            else
+            {                
+                CreateShoots(1, nave);
             }
         }
     }
