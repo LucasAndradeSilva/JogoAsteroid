@@ -27,11 +27,11 @@ namespace Asteroid.Gui
         #endregion
 
         #region Characters
-        Nave Nave;
-		Nave Boss;
-        List<Nave> NavesEnemy = new List<Nave>();
-        List<PowerUp> PowerUps = new List<PowerUp>();
-        AsteroidRock AsteroidRock;
+        public Nave Nave;
+		public Nave Boss;
+        public List<Nave> NavesEnemy = new List<Nave>();
+        public List<PowerUp> PowerUps = new List<PowerUp>();
+        public AsteroidRock AsteroidRock;
         #endregion
 
         #region Textures
@@ -84,7 +84,8 @@ namespace Asteroid.Gui
                     TimeBetweenShots = 300,
                     Bullets = new List<Bullet>(),
                 },
-                Powers = new List<PowerUp>()
+                Powers = new List<PowerUp>(),
+                TextureName = "images/foguete"
             };
 
             Nave.Life.CreateLifes(4);
@@ -111,7 +112,7 @@ namespace Asteroid.Gui
         }
         public override void LoadContent()
         {
-            NaveTexture = game.Content.Load<Texture2D>("images/foguete");
+            NaveTexture = game.Content.Load<Texture2D>(Nave.TextureName);
             AsteroidRock.Texture = game.Content.Load<Texture2D>("images/asteroid");
             Nave.Texture = NaveTexture;
             Nave.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
@@ -142,11 +143,14 @@ namespace Asteroid.Gui
                 {
                     AsteroidRock.Asteroids.Remove(asteroid);
 
-                    Nave.Life.Lifes.RemoveAt(0);
-                    Nave.Hit(HitNaveTexture);
+                    if (!Nave.Immune)
+                    {
+                        Nave.Life.Lifes.Remove(Nave.Life.Lifes.LastOrDefault());
+                        Nave.Hit(HitNaveTexture);
 
-                    if (Nave.Life.Lifes.Count <= 0)
-                        GameOver();
+                        if (Nave.Life.Lifes.Count <= 0)
+                            GameOver();
+                    }                    
                 }
             });
 
@@ -232,13 +236,16 @@ namespace Asteroid.Gui
 
                         if (bullet.CheckCollision(Nave.Rectangle))
                         {
-                            Nave.Life.Lifes.RemoveAt(0);
-                            Nave.Hit(HitNaveTexture);
-
                             enemy.Bullet.Bullets.Remove(bullet);
 
-                            if (Nave.Life.Lifes.Count <= 0)                         
-                                GameOver();                            
+                            if (!Nave.Immune)
+                            {
+                                Nave.Life.Lifes.Remove(Nave.Life.Lifes.LastOrDefault());
+                                Nave.Hit(HitNaveTexture);
+
+                                if (Nave.Life.Lifes.Count <= 0)
+                                    GameOver();
+                            }
                         }                       
                     });
                 });
@@ -256,13 +263,16 @@ namespace Asteroid.Gui
 
 					if (bullet.CheckCollision(Nave.Rectangle))
 					{
-						Nave.Life.Lifes.RemoveAt(0);
-                        Nave.Hit(HitNaveTexture);
-
                         Boss.Bullet.Bullets.Remove(bullet);
 
-                        if (Nave.Life.Lifes.Count <= 0)
-							GameOver();
+                        if (!Nave.Immune)
+                        {
+                            Nave.Life.Lifes.Remove(Nave.Life.Lifes.LastOrDefault());
+                            Nave.Hit(HitNaveTexture);
+                         
+                            if (Nave.Life.Lifes.Count <= 0)
+                                GameOver();
+                        }
 					}
 				});
 			}
@@ -275,7 +285,10 @@ namespace Asteroid.Gui
 
                     if (PowerUps[i].CheckCollision(Nave.Rectangle))
                     {
+                        PowerUps[i].X = game.graphics.PreferredBackBufferWidth - 40;
+                        PowerUps[i].Y = game.graphics.PreferredBackBufferHeight - 60;
                         Nave.Powers.Add(PowerUps[i]);
+
                         PowerUps.RemoveAt(0);
                     }
                     else
@@ -297,7 +310,20 @@ namespace Asteroid.Gui
             spriteBatch.DrawElement(Background);
 
             // Desenha o jogador
+            NaveTexture = game.Content.Load<Texture2D>(Nave.TextureName);
+            Nave.Texture = NaveTexture;
             spriteBatch.DrawElement(Nave);
+            for (int i = 0; i < Nave.Powers.Count; i++)
+            {
+                if (!Nave.Powers[i].FisrtDraw)
+                {
+                    var width = (i + 1) * 60;
+                    Nave.Powers[i].X -= width;
+                    Nave.Powers[i].FisrtDraw = true;
+                }
+
+                spriteBatch.DrawElement(Nave.Powers[i]);
+            }                             
 
 			// Desenha boss
 			if (Boss is not null)
@@ -406,7 +432,7 @@ namespace Asteroid.Gui
 								Texture = EnemyTexture
                             };
 
-                            naveEnemy.Size = Random.Shared.Next(64, 84);
+                            naveEnemy.Size = Random.Shared.Next(74, 94);
                             naveEnemy.Width = naveEnemy.Size;
 							naveEnemy.Heigth = naveEnemy.Size;
 							naveEnemy.Life.CreateLifes(Random.Shared.Next(1, 3));
@@ -470,21 +496,21 @@ namespace Asteroid.Gui
                 limitEnemyShips = 1;
             }
         }
-		private void ClearAsteroids()
+		public void ClearAsteroids()
 		{
 			AsteroidRock.Asteroids.Clear();
 			AsteroidRock.Count = -1;
 		}
-		private void ResetAsteroids()
+		public void ResetAsteroids()
 		{
 			AsteroidRock.Count = 3;
 		}
-		private void ClearNavesEnemy()
+        public void ClearNavesEnemy()
         {
             NavesEnemy.Clear();
 			maxEnemyShips = 0;
 		}
-        private void ResetNavesEnemy()
+        public void ResetNavesEnemy()
         {
 			maxEnemyShips = 6;
 		}

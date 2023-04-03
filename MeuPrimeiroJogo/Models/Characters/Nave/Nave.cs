@@ -40,19 +40,38 @@ namespace Asteroid.Models.Characters.Nave
 
         public void Initialize(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
         {
-            PlayerUsePowerUp(keyboardState, gameScreen);
+            PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
             PlayerMovement(keyboardState, graphics);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
 
-        public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreen gameScreen)
+        public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreen gameScreen, TimeSpan ElapsedGameTime)
         {
             if (keyboardState.IsKeyDown(Keys.X))
             {
-                if (Powers.Count > 0 && !Powers.Any(x => x.Using))
+                if (Powers.Count > 0)
                 {
-                    Powers.FirstOrDefault().UsePowerUp(this, gameScreen);
-                    Powers.RemoveAt(0);
+                    if (!Powers.Any(x => x.Using))
+                    {
+                        Powers[0].UsePowerUp(this, gameScreen);
+                        Powers[0].TimeElapsedPower += (int)ElapsedGameTime.TotalMilliseconds;                       
+                    }                    
+                }
+            }
+
+            if (Powers.Count > 0 && Powers.Any(x => x.Using))
+            {
+                var power = Powers.FirstOrDefault(x => x.Using);
+                var indexPower = Powers.IndexOf(power);
+
+                if (power.CheckTimeDisabled())
+                {
+                    Powers[indexPower].DisabledPower(this, gameScreen);
+                    Powers.Remove(power);
+                }
+                else
+                {
+                    Powers[indexPower].TimeElapsedPower += (int)ElapsedGameTime.TotalMilliseconds;
                 }
             }
         }

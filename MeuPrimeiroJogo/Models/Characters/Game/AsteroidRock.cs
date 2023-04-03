@@ -18,7 +18,7 @@ namespace Asteroid.Models.Characters.Game
         {
             if (Random.Shared.Next(100) < Count)
             {
-                Size = Random.Shared.Next(44, 74);
+                Size = Random.Shared.Next(44, 64);
                 var asteroid = new AsteroidRock()
                 {
                     X = Random.Shared.Next(graphics.PreferredBackBufferWidth - 64),

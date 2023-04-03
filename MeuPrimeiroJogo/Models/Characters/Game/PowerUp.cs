@@ -16,10 +16,10 @@ namespace Asteroid.Models.Characters.Game
         public bool Keep { get; set; }
         public bool Using { get; set; }
         public int TimeElapsedPower { get; set; }
-        public int TimeDisabledPower { get; set; }
+        public int TimeDisabledPower { get; set; } = 5000;
         public EnumPowerUpType PowerUpType { get; set; }
         public abstract void ActionPower(Nave.Nave nave, GameScreen gameScreen);
-        public abstract void DisebledPower(Nave.Nave nave, GameScreen gameScreen);
+        public abstract void DisabledPower(Nave.Nave nave, GameScreen gameScreen);
         public static PowerUp GeneretPowerUp()
         {
             var typePower = EnumPowerUpType.Nada;
@@ -30,14 +30,14 @@ namespace Asteroid.Models.Characters.Game
             {                
                 if (probability <= 20)
                 {
-                    typePower = (EnumPowerUpType)Random.Shared.Next(1, 3);
+                    typePower = (EnumPowerUpType)Random.Shared.Next(3, 3);
                 }                
             }
             else
             {             
                 if (probability <= 7)
                 {
-                    typePower = (EnumPowerUpType)Random.Shared.Next(4, 6);
+                    typePower = (EnumPowerUpType)Random.Shared.Next(4, 7);
                 }
             }
 
@@ -62,14 +62,14 @@ namespace Asteroid.Models.Characters.Game
                     case EnumPowerUpType.TripleShot:
                         return new TripleShotUp()
                         {
-                            TextureName = "images/Untitled",
+                            TextureName = "images/tripleUp",
                             Width = 50,
                             Heigth = 50,
                         };              
                     case EnumPowerUpType.Fire:
                         return new FireUp()
                         {
-                            TextureName = "images/Untitled",
+                            TextureName = "images/fireUp",
                             Width = 50,
                             Heigth = 50,
                         };
@@ -83,7 +83,7 @@ namespace Asteroid.Models.Characters.Game
                     case EnumPowerUpType.Nuclear:
                         return new NuclearUp()
                         {
-                            TextureName = "images/Untitled",    
+                            TextureName = "images/nuclearUp",    
                             Width = 50,
                             Heigth = 50,
                         };              
@@ -94,9 +94,13 @@ namespace Asteroid.Models.Characters.Game
 
             return default;
         }
+        public bool CheckTimeDisabled()
+        {
+            return this.TimeElapsedPower > this.TimeDisabledPower;
+        }
         public void UsePowerUp(Nave.Nave nave, GameScreen gameScreen)
-        {            
-            ActionPower(nave, gameScreen);            
+        {                        
+            ActionPower(nave, gameScreen);         
         }
     }
 
@@ -104,12 +108,20 @@ namespace Asteroid.Models.Characters.Game
     {
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            
+            nave.Immune = true;
+            nave.Width = 94;
+            nave.Heigth = 94;
+            nave.TextureName = "images/naveShilded";
+            Using = true;
         }
 
-        public override void DisebledPower(Nave.Nave nave, GameScreen gameScreen)
+        public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            throw new NotImplementedException();
+            nave.Immune = false;
+            nave.TextureName = "images/foguete";
+            nave.Width = 64;
+            nave.Heigth = 64;
+            Using = false;
         }
     }
 
@@ -121,7 +133,7 @@ namespace Asteroid.Models.Characters.Game
             Using = true;
         }
 
-        public override void DisebledPower(Nave.Nave nave, GameScreen gameScreen)
+        public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
             nave.Speed -= 10;
             Using = false;
@@ -132,23 +144,27 @@ namespace Asteroid.Models.Characters.Game
     {
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            throw new NotImplementedException();
+            Using = true;
         }
-        public override void DisebledPower(Nave.Nave nave, GameScreen gameScreen)
+        public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            throw new NotImplementedException();
+            Using = false;
         }
     }
 
     public class FireUp : PowerUp
     {
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
-        {
-            throw new NotImplementedException();
+        {            
+            nave.Bullet.Width = 100;
+            nave.Bullet.TimeBetweenShots = 0;
+            Using = true;
         }
-        public override void DisebledPower(Nave.Nave nave, GameScreen gameScreen)
+        public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            throw new NotImplementedException();
+            nave.Bullet.Width = 8;
+            nave.Bullet.TimeBetweenShots = 300;
+            Using = false;
         }
     }
 
@@ -159,7 +175,7 @@ namespace Asteroid.Models.Characters.Game
             Using = true;
             nave.Life.CreateLifes(1);
         }
-        public override void DisebledPower(Nave.Nave nave, GameScreen gameScreen)
+        public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
             Using = false; 
         }
@@ -169,11 +185,16 @@ namespace Asteroid.Models.Characters.Game
     {
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            throw new NotImplementedException();
+            gameScreen.ClearNavesEnemy();
+            gameScreen.ClearAsteroids();
+            gameScreen.Boss = null;            
+            Using = true;
         }
-        public override void DisebledPower(Nave.Nave nave, GameScreen gameScreen)
+        public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
-            throw new NotImplementedException();
+            Using = false;
+            gameScreen.ResetNavesEnemy();
+            gameScreen.ResetAsteroids();
         }
     }
 }

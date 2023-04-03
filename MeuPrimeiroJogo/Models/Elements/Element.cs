@@ -31,6 +31,7 @@ namespace Asteroid.Models.Elements
             }
         }
 
+        public bool FisrtDraw { get; set; } = false;
         public int X { get; set; } = 0;
         public int Y { get; set; } = 0;
         public int Width { get; set; } = 0; 

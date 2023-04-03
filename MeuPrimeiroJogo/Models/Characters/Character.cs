@@ -26,9 +26,10 @@ namespace Asteroid.Models.Characters
         public Life Life { get; set; }
         public int Points { get; set; } = 10;
         public bool Enemy { get; set; } = false;
-        public bool Destroyed { get; set; } = false;
-        public bool IsEnemy { get; set; }
+        public bool Destroyed { get; set; } = false;        
         public bool IsHited { get; set; } = false;
+        public bool Immune { get; set; }
+
         public int TimeBetweenHit { get; set; } = 1200;
         public int TimeElapsedHit { get; set; } = 0;
 
@@ -76,7 +77,6 @@ namespace Asteroid.Models.Characters
             }
         }
         public List<Life> Lifes { get; set; } = new List<Life> ();
-        public bool FisrtDraw { get; set; } = false;
 
         public void CreateLifes(int qtdLifes = 3)
         {
@@ -89,6 +89,7 @@ namespace Asteroid.Models.Characters
                     Width = this.Width,
                     Heigth = this.Heigth,
                     Texture = this.Texture,
+                    FisrtDraw = false,
                 };          
             
                 Lifes.Add(lifeClone);
