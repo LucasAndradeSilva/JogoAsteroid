@@ -8,6 +8,7 @@ namespace Asteroid.Enuns
 {
     public enum EnumMovement
     {
+        Nothing,
         Down,
         Up,
         Left,        

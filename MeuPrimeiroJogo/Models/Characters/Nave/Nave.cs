@@ -22,11 +22,10 @@ namespace Asteroid.Models.Characters.Nave
         public int TimeBetweenMovement { get; set; }
         public int ElapsedDirection { get; set; }
         public bool IsBoss { get; set; }
+        public bool SpecialShoot { get; set; }
         public Bullet Bullet { get; set; }
         public List<PowerUp> Powers { get; set; }
-
-        private EnumMovement LastMoviment = (EnumMovement)(new Random().Next(0,7));
-
+        private EnumMovement LastMoviment = (EnumMovement)(new Random().Next(1,8));
         public string GetTextureHit()
         {
             if (!IsHited)
@@ -38,14 +37,12 @@ namespace Asteroid.Models.Characters.Nave
                 return this.TextureName;
             }
         }
-
         public void Initialize(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
         {
             PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
             PlayerMovement(keyboardState, graphics);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
-
         public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreen gameScreen, TimeSpan ElapsedGameTime)
         {
             if (keyboardState.IsKeyDown(Keys.X))
@@ -76,7 +73,6 @@ namespace Asteroid.Models.Characters.Nave
                 }
             }
         }
-
         public void PlayerMovement(KeyboardState keyboardState, GraphicsDeviceManager graphics)
         {
             if (keyboardState.IsKeyDown(Keys.Left))
@@ -97,11 +93,10 @@ namespace Asteroid.Models.Characters.Nave
             }
 
             ScreenLimit(graphics);
-        }          
-        
+        }                  
         public void AutoMovement(GraphicsDeviceManager graphics, TimeSpan ElapsedGameTime)
         {            
-            var randomNumber = Random.Shared.Next(0, 7);
+            var randomNumber = Random.Shared.Next(1, 8);
             var randomMoviment = (EnumMovement)randomNumber;
 
             if (this.ElapsedTimeSinceLastMovement >= this.TimeBetweenMovement)

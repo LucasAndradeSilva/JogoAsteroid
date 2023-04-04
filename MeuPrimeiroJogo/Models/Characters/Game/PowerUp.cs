@@ -148,13 +148,20 @@ namespace Asteroid.Models.Characters.Game
 
     public class TripleShotUp : PowerUp
     {
+        public TripleShotUp()
+        {
+            TimeDisabledPower = 15000;
+        }
+
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
             Using = true;
+            nave.SpecialShoot = true;
         }
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
             Using = false;
+            nave.SpecialShoot = false;
         }
     }
 
@@ -194,8 +201,17 @@ namespace Asteroid.Models.Characters.Game
 
     public class NuclearUp : PowerUp
     {
+        public NuclearUp()
+        {
+            TimeDisabledPower = 500;
+        }
+
         public override void ActionPower(Nave.Nave nave, GameScreen gameScreen)
         {
+            var sumPoints = gameScreen.AsteroidRock.Asteroids.Sum(x => x.Points);
+            sumPoints += gameScreen.NavesEnemy.Sum(x => x.Points);
+            sumPoints += gameScreen.Boss.Points;
+
             gameScreen.ClearNavesEnemy();
             gameScreen.ClearAsteroids();
             gameScreen.Boss = null;            
