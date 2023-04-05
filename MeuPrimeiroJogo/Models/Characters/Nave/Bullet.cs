@@ -19,7 +19,7 @@ namespace Asteroid.Models.Characters.Nave
         public List<Bullet> Bullets { get; set; }
         public void BulletShoot(KeyboardState keyboardState, TimeSpan ElapsedGameTime, Nave nave)
         {
-            if (keyboardState.IsKeyDown(Keys.Space) && this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
+            if (keyboardState.IsKeyDown(Keys.Enter) && this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
             {
                 if (nave.SpecialShoot)
                 {
@@ -29,6 +29,24 @@ namespace Asteroid.Models.Characters.Nave
                 {
                     CreateShoots(1, nave);
                 }                
+            }
+            else
+            {
+                this.ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
+            }
+        }
+        public void BulletShoot2(KeyboardState keyboardState, TimeSpan ElapsedGameTime, Nave nave)
+        {
+            if (keyboardState.IsKeyDown(Keys.Space) && this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
+            {
+                if (nave.SpecialShoot)
+                {
+                    CreateShoots(Random.Shared.Next(1, 4), nave);
+                }
+                else
+                {
+                    CreateShoots(1, nave);
+                }
             }
             else
             {

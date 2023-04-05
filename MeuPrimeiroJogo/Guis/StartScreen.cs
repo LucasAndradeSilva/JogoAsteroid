@@ -16,6 +16,7 @@ namespace Asteroid.Guis
     public class StartScreen : Screen
     {
         Button BtnStart;
+        Button BtnStartTwoPlayer;
         Background Background;
         Text TxtStartTitulo;
         Text TxtStartSubTitulo;
@@ -26,7 +27,14 @@ namespace Asteroid.Guis
 
             BtnStart = new Button()
             {
-                X = game.graphics.GetCenterX(),
+                X = game.graphics.GetCenterX() - 60,
+                Y = game.graphics.GetCenterY() - 20,
+                Width = 200,
+                Heigth = 100
+            };
+            BtnStartTwoPlayer = new Button()
+            {
+                X = game.graphics.GetCenterX() + 80,
                 Y = game.graphics.GetCenterY() - 20,
                 Width = 200,
                 Heigth = 100
@@ -53,6 +61,7 @@ namespace Asteroid.Guis
         public override void LoadContent()
         {
             BtnStart.Texture = game.Content.Load<Texture2D>("images/btnStart");
+            BtnStartTwoPlayer.Texture = game.Content.Load<Texture2D>("images/btnStart");
             Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
 
             TxtStartTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
@@ -83,6 +92,13 @@ namespace Asteroid.Guis
                 game.currentScreen = new PreGameScreen(game);
                 game.currentScreen.LoadContent();
             });
+
+            BtnStartTwoPlayer.Click(mouseState, () =>
+            {
+                game.TwoPlayers = true;
+                game.currentScreen = new PreGameScreen(game);
+                game.currentScreen.LoadContent();
+            });
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
@@ -92,6 +108,7 @@ namespace Asteroid.Guis
 
             // Desenha o botão de iniciar
             spriteBatch.DrawElement(BtnStart);
+            spriteBatch.DrawElement(BtnStartTwoPlayer);            
 
             //Desenha Titulo
             spriteBatch.DrawText(TxtStartTitulo);

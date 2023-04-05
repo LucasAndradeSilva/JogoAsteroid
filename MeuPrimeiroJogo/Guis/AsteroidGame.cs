@@ -16,6 +16,7 @@ namespace Asteroid.Guis
         public SpriteBatch spriteBatch;
         public Screen currentScreen;
         public Player player;
+        public bool TwoPlayers = false;
 
         public AsteroidGame()
         {

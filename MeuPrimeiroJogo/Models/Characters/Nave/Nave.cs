@@ -43,6 +43,12 @@ namespace Asteroid.Models.Characters.Nave
             PlayerMovement(keyboardState, graphics);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
+        public void Initialize2(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
+        {
+            PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
+            PlayerMovement2(keyboardState, graphics);
+            CheckUnhit(texture, gameTime.ElapsedGameTime);
+        }
         public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreen gameScreen, TimeSpan ElapsedGameTime)
         {
             if (keyboardState.IsKeyDown(Keys.X))
@@ -93,7 +99,28 @@ namespace Asteroid.Models.Characters.Nave
             }
 
             ScreenLimit(graphics);
-        }                  
+        }
+        public void PlayerMovement2(KeyboardState keyboardState, GraphicsDeviceManager graphics)
+        {
+            if (keyboardState.IsKeyDown(Keys.A))
+            {
+                this.X -= this.Speed;
+            }
+            if (keyboardState.IsKeyDown(Keys.D))
+            {
+                this.X += this.Speed;
+            }
+            if (keyboardState.IsKeyDown(Keys.W))
+            {
+                this.Y -= this.Speed;
+            }
+            if (keyboardState.IsKeyDown(Keys.S))
+            {
+                this.Y += this.Speed;
+            }
+
+            ScreenLimit(graphics);
+        }
         public void AutoMovement(GraphicsDeviceManager graphics, TimeSpan ElapsedGameTime)
         {            
             var randomNumber = Random.Shared.Next(1, 8);
