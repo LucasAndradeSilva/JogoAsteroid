@@ -43,12 +43,6 @@ namespace Asteroid.Models.Characters.Nave
             PlayerMovement(keyboardState, graphics);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
-        public void Initialize2(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
-        {
-            PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
-            PlayerMovement2(keyboardState, graphics);
-            CheckUnhit(texture, gameTime.ElapsedGameTime);
-        }
         public void Initialize(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreenPlayers gameScreen, Texture2D texture, GameTime gameTime)
         {
             PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
@@ -57,13 +51,13 @@ namespace Asteroid.Models.Characters.Nave
         }
         public void Initialize2(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreenPlayers gameScreen, Texture2D texture, GameTime gameTime)
         {
-            PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
+            PlayerUsePowerUp2(keyboardState, gameScreen, gameTime.ElapsedGameTime);
             PlayerMovement2(keyboardState, graphics);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
         public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreen gameScreen, TimeSpan ElapsedGameTime)
         {
-            if (keyboardState.IsKeyDown(Keys.X))
+            if (keyboardState.IsKeyDown(Keys.P))
             {
                 if (Powers.Count > 0)
                 {
@@ -92,6 +86,36 @@ namespace Asteroid.Models.Characters.Nave
             }
         }
         public void PlayerUsePowerUp(KeyboardState keyboardState, GameScreenPlayers gameScreen, TimeSpan ElapsedGameTime)
+        {
+            if (keyboardState.IsKeyDown(Keys.P))
+            {
+                if (Powers.Count > 0)
+                {
+                    if (!Powers.Any(x => x.Using))
+                    {
+                        Powers[0].UsePowerUp(this, gameScreen);
+                        Powers[0].TimeElapsedPower += (int)ElapsedGameTime.TotalMilliseconds;
+                    }
+                }
+            }
+
+            if (Powers.Count > 0 && Powers.Any(x => x.Using))
+            {
+                var power = Powers.FirstOrDefault(x => x.Using);
+                var indexPower = Powers.IndexOf(power);
+
+                if (power.CheckTimeDisabled())
+                {
+                    Powers[indexPower].DisabledPower(this, gameScreen);
+                    Powers.Remove(power);
+                }
+                else
+                {
+                    Powers[indexPower].TimeElapsedPower += (int)ElapsedGameTime.TotalMilliseconds;
+                }
+            }
+        }
+        public void PlayerUsePowerUp2(KeyboardState keyboardState, GameScreenPlayers gameScreen, TimeSpan ElapsedGameTime)
         {
             if (keyboardState.IsKeyDown(Keys.X))
             {

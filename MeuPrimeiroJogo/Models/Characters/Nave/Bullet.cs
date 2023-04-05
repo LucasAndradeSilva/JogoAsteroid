@@ -124,7 +124,6 @@ namespace Asteroid.Models.Characters.Nave
 
             return movement;
         }
-
         public EnumMovement RandomMovimentExceptUp()
         {
             var movement = EnumMovement.Down;
