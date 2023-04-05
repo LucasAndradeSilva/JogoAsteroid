@@ -20,6 +20,8 @@ namespace Asteroid.Models.Characters.Game
         public EnumPowerUpType PowerUpType { get; set; }
         public abstract void ActionPower(Nave.Nave nave, GameScreen gameScreen);
         public abstract void DisabledPower(Nave.Nave nave, GameScreen gameScreen);
+        public abstract void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen);
+        public abstract void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen);
         public static PowerUp GeneretPowerUp()
         {
             var typePower = EnumPowerUpType.Nada;
@@ -102,6 +104,10 @@ namespace Asteroid.Models.Characters.Game
         {                        
             ActionPower(nave, gameScreen);         
         }
+        public void UsePowerUp(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            ActionPower(nave, gameScreen);
+        }
     }
 
     public class ShieldUp : PowerUp
@@ -128,6 +134,23 @@ namespace Asteroid.Models.Characters.Game
             nave.Heigth = 64;
             Using = false;
         }
+         public override void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            nave.Immune = true;
+            nave.Width = 94;
+            nave.Heigth = 94;
+            nave.TextureName = "images/naveShilded";
+            Using = true;
+        }
+
+        public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            nave.Immune = false;
+            nave.TextureName = "images/foguete";
+            nave.Width = 64;
+            nave.Heigth = 64;
+            Using = false;
+        }
     }
 
     public class VelocityUp : PowerUp
@@ -140,6 +163,17 @@ namespace Asteroid.Models.Characters.Game
         }
 
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
+        {
+            nave.Speed -= 8;
+            Using = false;
+        }
+        public override void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            nave.Speed += 8;
+            Using = true;
+        }
+
+        public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
         {
             nave.Speed -= 8;
             Using = false;
@@ -159,6 +193,16 @@ namespace Asteroid.Models.Characters.Game
             nave.SpecialShoot = true;
         }
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
+        {
+            Using = false;
+            nave.SpecialShoot = false;
+        }
+        public override void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            Using = true;
+            nave.SpecialShoot = true;
+        }
+        public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
         {
             Using = false;
             nave.SpecialShoot = false;
@@ -184,6 +228,20 @@ namespace Asteroid.Models.Characters.Game
             nave.Bullet.TimeBetweenShots = 300;
             Using = false;
         }
+
+        public override void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            nave.Bullet.Heigth = 80;
+            nave.Bullet.Width = 60;
+            nave.Bullet.TimeBetweenShots = 50;
+            Using = true;
+        }
+        public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            nave.Bullet.Width = 8;
+            nave.Bullet.TimeBetweenShots = 300;
+            Using = false;
+        }
     }
 
     public class LifeUp : PowerUp
@@ -196,6 +254,16 @@ namespace Asteroid.Models.Characters.Game
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
             Using = false; 
+        }
+
+        public override void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            Using = true;
+            nave.Life.CreateLifes(1);
+        }
+        public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            Using = false;
         }
     }
 
@@ -218,6 +286,23 @@ namespace Asteroid.Models.Characters.Game
             Using = true;
         }
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
+        {
+            Using = false;
+            gameScreen.ResetNavesEnemy();
+            gameScreen.ResetAsteroids();
+        }
+        public override void ActionPower(Nave.Nave nave, GameScreenPlayers gameScreen)
+        {
+            var sumPoints = gameScreen.AsteroidRock.Asteroids.Sum(x => x.Points);
+            sumPoints += gameScreen.NavesEnemy.Sum(x => x.Points);
+            sumPoints += gameScreen.Boss.Points;
+
+            gameScreen.ClearNavesEnemy();
+            gameScreen.ClearAsteroids();
+            gameScreen.Boss = null;
+            Using = true;
+        }
+        public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
         {
             Using = false;
             gameScreen.ResetNavesEnemy();

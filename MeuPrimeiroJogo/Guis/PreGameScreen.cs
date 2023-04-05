@@ -24,6 +24,7 @@ namespace Asteroid.Guis
         #endregion
 
         Nave Nave;
+        Nave Nave2;
 
         int TimeBetweenText = 1000;
         int TimeBetweenTime = 0;
@@ -35,6 +36,15 @@ namespace Asteroid.Guis
             Mouse.SetCursor(MouseCursor.Arrow);
 
             Nave = new Nave()
+            {
+                Width = 64,
+                Heigth = 64,
+                Speed = 5,
+                Size = 64,
+                X = game.graphics.GetCenterX() + 65,
+                Y = game.graphics.GetCenterY() + 150,
+            };
+            Nave2 = new Nave()
             {
                 Width = 64,
                 Heigth = 64,
@@ -66,6 +76,7 @@ namespace Asteroid.Guis
         public override void LoadContent()
         {
             Nave.Texture = game.Content.Load<Texture2D>("images/foguete");
+            Nave2.Texture = game.Content.Load<Texture2D>("images/foguete2");
             Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
             TxtCount.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
@@ -82,6 +93,10 @@ namespace Asteroid.Guis
             }
 
             Nave.PlayerMovement(keyboardState, game.graphics);
+            if (game.TwoPlayers)
+            {
+                Nave2.PlayerMovement2(keyboardState, game.graphics);
+            }
 
             TimeBetweenTime += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
         }
@@ -98,8 +113,16 @@ namespace Asteroid.Guis
             var CurrentNumber = int.Parse(TxtCount.Content) - 1;
             if (CurrentNumber < 0)
             {
-                game.currentScreen = new GameScreen(game);
-                game.currentScreen.LoadContent();
+                if (game.TwoPlayers)
+                {
+                    game.currentScreen = new GameScreenPlayers(game);
+                    game.currentScreen.LoadContent();
+                }
+                else
+                {
+                    game.currentScreen = new GameScreen(game);
+                    game.currentScreen.LoadContent();
+                }                
             }
         }
 
@@ -110,9 +133,13 @@ namespace Asteroid.Guis
 
             //Desenha nave
             spriteBatch.DrawElement(Nave);
+            if (game.TwoPlayers)            
+            {
+                spriteBatch.DrawElement(Nave2);
+            }
 
-            //Desenha o texto
-            spriteBatch.DrawText(TxtCount);
+                //Desenha o texto
+                spriteBatch.DrawText(TxtCount);
             spriteBatch.DrawText(TxtScore);
 
             game.spriteBatch = spriteBatch;

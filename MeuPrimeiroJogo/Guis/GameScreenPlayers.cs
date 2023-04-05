@@ -16,6 +16,7 @@ using Asteroid.Models.Characters;
 using System.Linq;
 using Asteroid.Models.Characters.Game;
 using System.Runtime.Intrinsics.X86;
+using System.Threading.Tasks;
 
 namespace Asteroid.Guis
 {
@@ -115,7 +116,7 @@ namespace Asteroid.Guis
                     Bullets = new List<Bullet>(),
                 },
                 Powers = new List<PowerUp>(),
-                TextureName = "images/foguete"
+                TextureName = "images/foguete2"
             };
 
             Nave.Life.CreateLifes(4);
@@ -165,11 +166,13 @@ namespace Asteroid.Guis
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
 
-            Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime);
+            Task.Run(() => Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime));
+
             if (game.TwoPlayers)
             {
-                Nave2.Initialize2(keyboardState, game.graphics, this, NaveTexture, gameTime);
+                Task.Run(() => Nave2.Initialize2(keyboardState, game.graphics, this, NaveTexture, gameTime));
             }
+
             AsteroidRock.CreateAsteroid(game.graphics);
 
             AsteroidRock.AsteroidMovement(game.graphics, (obj) =>
@@ -193,6 +196,8 @@ namespace Asteroid.Guis
                 {
                     if (asteroid.CheckCollision(Nave2.Rectangle) && !asteroid.Destroyed)
                     {
+                        AsteroidRock.Asteroids.Remove(asteroid);
+
                         if (!Nave2.Immune)
                         {
                             Nave2.Life.Lifes.Remove(Nave2.Life.Lifes.LastOrDefault());
@@ -204,7 +209,7 @@ namespace Asteroid.Guis
                     }
                 }
             });
-
+            
             Nave.Bullet.BulletShoot(keyboardState, gameTime.ElapsedGameTime, Nave);
             Nave.Bullet.BulletShootMovement(game.graphics, EnumMovement.Up, (obj) =>
             {
@@ -271,9 +276,10 @@ namespace Asteroid.Guis
                         Nave.Bullet.Bullets.Remove(bullet);
                     }
                 }
-            });
+            });            
+            
             if (game.TwoPlayers)
-            {
+            {                
                 Nave2.Bullet.BulletShoot2(keyboardState, gameTime.ElapsedGameTime, Nave2);
                 Nave2.Bullet.BulletShootMovement(game.graphics, EnumMovement.Up, (obj) =>
                 {
@@ -340,7 +346,7 @@ namespace Asteroid.Guis
                             Nave2.Bullet.Bullets.Remove(bullet);
                         }
                     }
-                });
+                });                
             }
 
                 //Verifica se o tiro da nave inimiga me acertou

@@ -16,6 +16,8 @@ namespace Asteroid.Models.Characters.Nave
         public EnumMovement Movement { get; set; } = default;
         public int ElapsedTimeSinceLastShot { get; set; }
         public int TimeBetweenShots { get; set; }
+        public int ElapsedTimeSinceLastShot2 { get; set; }
+        public int TimeBetweenShots2 { get; set; }
         public List<Bullet> Bullets { get; set; }
         public void BulletShoot(KeyboardState keyboardState, TimeSpan ElapsedGameTime, Nave nave)
         {
@@ -37,7 +39,7 @@ namespace Asteroid.Models.Characters.Nave
         }
         public void BulletShoot2(KeyboardState keyboardState, TimeSpan ElapsedGameTime, Nave nave)
         {
-            if (keyboardState.IsKeyDown(Keys.Space) && this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
+            if (keyboardState.IsKeyDown(Keys.Space) && this.ElapsedTimeSinceLastShot2 >= this.TimeBetweenShots2)
             {
                 if (nave.SpecialShoot)
                 {
@@ -50,7 +52,7 @@ namespace Asteroid.Models.Characters.Nave
             }
             else
             {
-                this.ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
+                this.ElapsedTimeSinceLastShot2 += (int)ElapsedGameTime.TotalMilliseconds;
             }
         }
         private void BulletShoot(int X, int Y, int Width, Nave nave)
@@ -71,6 +73,7 @@ namespace Asteroid.Models.Characters.Nave
             this.Bullets.Add(bullet);
 
             this.ElapsedTimeSinceLastShot = 0;
+            this.ElapsedTimeSinceLastShot2 = 0;
         }
         public void AutoBulletShoot(TimeSpan ElapsedGameTime, Nave nave)
         {
