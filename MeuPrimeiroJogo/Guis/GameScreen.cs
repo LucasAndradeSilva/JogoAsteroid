@@ -249,6 +249,9 @@ namespace Asteroid.Guis
                             }
                         }
                     });
+
+                    if (enemy.CheckCollision(Nave.Rectangle))                    
+                        GameOver();                    
                 });
             }
 
@@ -276,6 +279,9 @@ namespace Asteroid.Guis
                         }
                     }
                 });
+
+                if (Boss.CheckCollision(Nave.Rectangle))                
+                    GameOver();                
             }
 
             if (PowerUps.Count > 0)
