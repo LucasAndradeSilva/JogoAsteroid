@@ -7,7 +7,6 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using Asteroid.Models.Screens;
-using Asteroid.Gui;
 using System.Drawing;
 using System.Diagnostics.Metrics;
 using Asteroid.Models.Players;
@@ -17,7 +16,7 @@ using Asteroid.Models.Characters;
 using System.Linq;
 using Asteroid.Models.Characters.Game;
 
-namespace Asteroid.Gui
+namespace Asteroid.Guis
 {
     public class GameScreen : Screen
     {
@@ -28,7 +27,7 @@ namespace Asteroid.Gui
 
         #region Characters
         public Nave Nave;
-		public Nave Boss;
+        public Nave Boss;
         public List<Nave> NavesEnemy = new List<Nave>();
         public List<PowerUp> PowerUps = new List<PowerUp>();
         public AsteroidRock AsteroidRock;
@@ -37,10 +36,11 @@ namespace Asteroid.Gui
         #region Textures
         Texture2D NaveTexture;
         Texture2D EnemyTexture;
-        Texture2D HitNaveTexture;        
+        Texture2D HitNaveTexture;
         Texture2D HitEnemyTexture;
         Texture2D LifeTexture;
-        Texture2D BossTexture { 
+        Texture2D BossTexture
+        {
             get
             {
                 return game.Content.Load<Texture2D>(Boss.TextureName);
@@ -50,15 +50,16 @@ namespace Asteroid.Gui
 
         #region Difficulty        
         private int nextDifficultyScore = 50;
-		private int limitEnemyShips = 12; 
+        private int limitEnemyShips = 12;
         private int maxEnemyShips = 6;
         private int maxRock = 6;
         int lastBackgroundNumber = 0;
 
         #endregion
 
-        public GameScreen(AsteroidGame game) : base(game) {
-			game.Window.Title = "Asteroid Game";
+        public GameScreen(AsteroidGame game) : base(game)
+        {
+            game.Window.Title = "Asteroid Game";
 
             Nave = new Nave()
             {
@@ -108,7 +109,7 @@ namespace Asteroid.Gui
                 X = 10,
                 Y = 10
             };
-            
+
         }
         public override void LoadContent()
         {
@@ -132,8 +133,8 @@ namespace Asteroid.Gui
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
 
-            Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime);            
-            
+            Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime);
+
             AsteroidRock.CreateAsteroid(game.graphics);
 
             AsteroidRock.AsteroidMovement(game.graphics, (obj) =>
@@ -150,7 +151,7 @@ namespace Asteroid.Gui
 
                         if (Nave.Life.Lifes.Count <= 0)
                             GameOver();
-                    }                    
+                    }
                 }
             });
 
@@ -163,14 +164,14 @@ namespace Asteroid.Gui
                 for (int j = AsteroidRock.Asteroids.Count - 1; j >= 0; j--)
                 {
                     if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle) && !AsteroidRock.Asteroids[j].Destroyed)
-                    {                                                
+                    {
                         AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("images/explosao");
-                        AsteroidRock.Asteroids[j].Destroyed = true;                        
+                        AsteroidRock.Asteroids[j].Destroyed = true;
 
                         Nave.Bullet.Bullets.Remove(bullet);
 
                         game.player.UpdatePoints(AsteroidRock.Asteroids[j].Points);
-                        
+
                         break;
                     }
                 }
@@ -179,7 +180,7 @@ namespace Asteroid.Gui
                 for (int i = NavesEnemy.Count - 1; i >= 0; i--)
                 {
                     if (bullet.CheckCollision(NavesEnemy[i].Rectangle))
-                    {                        
+                    {
                         NavesEnemy[i].Life.Lifes.RemoveAt(0);
                         NavesEnemy[i].Hit(HitEnemyTexture);
 
@@ -187,29 +188,29 @@ namespace Asteroid.Gui
                         {
                             game.player.UpdatePoints(NavesEnemy[i].Points);
                             CheckPowerUp(NavesEnemy[i].Rectangle);
-                            NavesEnemy.RemoveAt(i);                            
+                            NavesEnemy.RemoveAt(i);
                         }
 
-						Nave.Bullet.Bullets.Remove(bullet);
+                        Nave.Bullet.Bullets.Remove(bullet);
 
-						break;
+                        break;
                     }
                 }
 
                 //Verifica se atingiu boss
                 if (Boss is not null)
-                {                    
-					if (bullet.CheckCollision(Boss.Rectangle))
+                {
+                    if (bullet.CheckCollision(Boss.Rectangle))
                     {
                         Boss.Life.Lifes.RemoveAt(0);
                         Boss.Hit(game.Content.Load<Texture2D>(Boss.GetTextureHit()));
 
-						if (Boss.Life.Lifes.Count <= 0)
-						{
-							game.player.UpdatePoints(Boss.Points);
-						
-							Nave.Bullet.Bullets.Remove(bullet);
-                           
+                        if (Boss.Life.Lifes.Count <= 0)
+                        {
+                            game.player.UpdatePoints(Boss.Points);
+
+                            Nave.Bullet.Bullets.Remove(bullet);
+
                             CheckPowerUp(Boss.Rectangle);
                             ResetAsteroids();
                             UpdateHardDiffculty();
@@ -217,8 +218,8 @@ namespace Asteroid.Gui
                             Boss = default;
                         }
 
-                        Nave.Bullet.Bullets.Remove(bullet);                       
-					}
+                        Nave.Bullet.Bullets.Remove(bullet);
+                    }
                 }
             });
 
@@ -231,7 +232,7 @@ namespace Asteroid.Gui
                     enemy.AutoMovement(game.graphics, gameTime.ElapsedGameTime);
                     enemy.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, enemy);
                     enemy.Bullet.BulletShootMovement(game.graphics, EnumMovement.Down, (obj) =>
-                    {                        
+                    {
                         var bullet = obj as Bullet;
 
                         if (bullet.CheckCollision(Nave.Rectangle))
@@ -246,36 +247,36 @@ namespace Asteroid.Gui
                                 if (Nave.Life.Lifes.Count <= 0)
                                     GameOver();
                             }
-                        }                       
+                        }
                     });
                 });
             }
 
             //Verifica se boss me atingiu
             if (Boss is not null)
-            {                
+            {
                 Boss.CheckUnhit(BossTexture, gameTime.ElapsedGameTime);
                 Boss.AutoMovement(game.graphics, gameTime.ElapsedGameTime);
-				Boss.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, Boss);
-				Boss.Bullet.BulletShootMovement(game.graphics, (obj) =>
-				{					
-					var bullet = obj as Bullet;
+                Boss.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, Boss);
+                Boss.Bullet.BulletShootMovement(game.graphics, EnumMovement.Down, (obj) =>
+                {
+                    var bullet = obj as Bullet;
 
-					if (bullet.CheckCollision(Nave.Rectangle))
-					{
+                    if (bullet.CheckCollision(Nave.Rectangle))
+                    {
                         Boss.Bullet.Bullets.Remove(bullet);
 
                         if (!Nave.Immune)
                         {
                             Nave.Life.Lifes.Remove(Nave.Life.Lifes.LastOrDefault());
                             Nave.Hit(HitNaveTexture);
-                         
+
                             if (Nave.Life.Lifes.Count <= 0)
                                 GameOver();
                         }
-					}
-				});
-			}
+                    }
+                });
+            }
 
             if (PowerUps.Count > 0)
             {
@@ -299,13 +300,13 @@ namespace Asteroid.Gui
                         });
                     }
                 }
-            
+
             }
 
-			UpdateDifficulty();
+            UpdateDifficulty();
         }
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)
-        {            
+        {
             // Desenha o fundo
             spriteBatch.DrawElement(Background);
 
@@ -323,33 +324,33 @@ namespace Asteroid.Gui
                 }
 
                 spriteBatch.DrawElement(Nave.Powers[i]);
-            }                             
+            }
 
-			// Desenha boss
-			if (Boss is not null)
+            // Desenha boss
+            if (Boss is not null)
             {
-				spriteBatch.DrawElement(Boss);
+                spriteBatch.DrawElement(Boss);
                 foreach (var bullet in Boss.Bullet.Bullets)
                 {
-					bullet.Texture = Nave.Bullet.Texture;
-					spriteBatch.DrawElement(bullet);
-				}
-			}				
-            
+                    bullet.Texture = Nave.Bullet.Texture;
+                    spriteBatch.DrawElement(bullet);
+                }
+            }
+
             // Desenha vidas
             var naveBase = Nave.Life.Lifes.FirstOrDefault();
             for (int i = 0; i < Nave.Life.Lifes.Count; i++)
             {
                 if (!Nave.Life.Lifes[i].FisrtDraw)
-                {                      
-                    naveBase.X -= 20; 
+                {
+                    naveBase.X -= 20;
                     Nave.Life.Lifes[i].X = naveBase.X;
                     Nave.Life.Lifes[i].FisrtDraw = true;
-                }                    
+                }
 
                 spriteBatch.DrawElement(Nave.Life.Lifes[i]);
-            }            
-            
+            }
+
             // Desenha os asteroides                        
             foreach (var asteroid in AsteroidRock.Asteroids)
             {
@@ -366,7 +367,7 @@ namespace Asteroid.Gui
 
             // Desenha as naves inimigas
             foreach (var nave in NavesEnemy)
-            {                
+            {
                 spriteBatch.DrawElement(nave);
 
                 foreach (var bullet in nave.Bullet.Bullets)
@@ -385,62 +386,62 @@ namespace Asteroid.Gui
             // Desenha a pontuação
             TxtScore.Content = $"Pontuacao {game.player.Score}";
             spriteBatch.DrawText(TxtScore);
-            
+
             game.spriteBatch = spriteBatch;
         }
         private void GameOver()
-        {            
+        {
             game.currentScreen = new GameOver(game);
             game.currentScreen.LoadContent();
             return;
         }
-		private void UpdateDifficulty()
-		{			
-			if (game.player.Score > nextDifficultyScore)
-			{				                
-				nextDifficultyScore += Random.Shared.Next(50, 150);				
-				AsteroidRock.Count = Random.Shared.Next(3, maxRock);
-				
-				if (NavesEnemy.Count < limitEnemyShips)
-				{                   
-					if (Random.Shared.Next(0, 2) == 0)
-					{
+        private void UpdateDifficulty()
+        {
+            if (game.player.Score > nextDifficultyScore)
+            {
+                nextDifficultyScore += Random.Shared.Next(50, 150);
+                AsteroidRock.Count = Random.Shared.Next(3, maxRock);
+
+                if (NavesEnemy.Count < limitEnemyShips)
+                {
+                    if (Random.Shared.Next(0, 2) == 0)
+                    {
                         var navesQtd = Random.Shared.Next(1, maxEnemyShips);
                         for (int i = 0; i < navesQtd; i++)
                         {
-							var naveEnemy = new Nave()
-							{
-								Points = Random.Shared.Next(25, 50),
-								TimeBetweenMovement = Random.Shared.Next(1000, 3000),								
-								Speed = Random.Shared.Next(1, 3),								
-								Y = 0,
-								X = Random.Shared.Next(game.graphics.PreferredBackBufferWidth),
-								Roatation = 180,
-								Life = new Life()
-								{
-									Texture = LifeTexture
-								},
-								Bullet = new Bullet()
-								{
-									Speed = 8,
-									Width = 8,
-									Heigth = 16,
-									TimeBetweenShots = 1000,
-									Bullets = new List<Bullet>(),
-								},
-								Enemy = true,
-								Texture = EnemyTexture
+                            var naveEnemy = new Nave()
+                            {
+                                Points = Random.Shared.Next(25, 50),
+                                TimeBetweenMovement = Random.Shared.Next(1000, 3000),
+                                Speed = Random.Shared.Next(1, 3),
+                                Y = 0,
+                                X = Random.Shared.Next(game.graphics.PreferredBackBufferWidth),
+                                Roatation = 180,
+                                Life = new Life()
+                                {
+                                    Texture = LifeTexture
+                                },
+                                Bullet = new Bullet()
+                                {
+                                    Speed = 8,
+                                    Width = 8,
+                                    Heigth = 16,
+                                    TimeBetweenShots = 1000,
+                                    Bullets = new List<Bullet>(),
+                                },
+                                Enemy = true,
+                                Texture = EnemyTexture
                             };
 
                             naveEnemy.Size = Random.Shared.Next(74, 94);
                             naveEnemy.Width = naveEnemy.Size;
-							naveEnemy.Heigth = naveEnemy.Size;
-							naveEnemy.Life.CreateLifes(Random.Shared.Next(1, 3));
+                            naveEnemy.Heigth = naveEnemy.Size;
+                            naveEnemy.Life.CreateLifes(Random.Shared.Next(1, 3));
 
-							NavesEnemy.Add(naveEnemy);
-						}						
-					}
-				}
+                            NavesEnemy.Add(naveEnemy);
+                        }
+                    }
+                }
 
                 //Random boss
                 if (Random.Shared.Next(0, 10) == 0 && Boss is null)
@@ -470,18 +471,19 @@ namespace Asteroid.Gui
                         },
                         Enemy = true,
                         IsBoss = true,
-                        TextureName = $"images/boss{Random.Shared.Next(1, 5)}",                        
-					};
+                        SpecialShoot = true,
+                        TextureName = $"images/boss{Random.Shared.Next(1, 5)}",
+                    };
 
                     Boss.Texture = game.Content.Load<Texture2D>(Boss.TextureName);
                     Boss.Size = Random.Shared.Next(100, 150);
-					Boss.Width = Boss.Size;
-					Boss.Heigth = Boss.Size;
+                    Boss.Width = Boss.Size;
+                    Boss.Heigth = Boss.Size;
 
-					Boss.Life.CreateLifes(Random.Shared.Next(15, 20));
-				}
-			}		
-		}
+                    Boss.Life.CreateLifes(Random.Shared.Next(15, 20));
+                }
+            }
+        }
         private void UpdateHardDiffculty()
         {
             var random = Random.Shared.Next(1, 10);
@@ -497,24 +499,24 @@ namespace Asteroid.Gui
                 limitEnemyShips = 1;
             }
         }
-		public void ClearAsteroids()
-		{
-			AsteroidRock.Asteroids.Clear();
-			AsteroidRock.Count = -1;
-		}
-		public void ResetAsteroids()
-		{
-			AsteroidRock.Count = 3;
-		}
+        public void ClearAsteroids()
+        {
+            AsteroidRock.Asteroids.Clear();
+            AsteroidRock.Count = -1;
+        }
+        public void ResetAsteroids()
+        {
+            AsteroidRock.Count = 3;
+        }
         public void ClearNavesEnemy()
         {
             NavesEnemy.Clear();
-			maxEnemyShips = 0;
-		}
+            maxEnemyShips = 0;
+        }
         public void ResetNavesEnemy()
         {
-			maxEnemyShips = 6;
-		}
+            maxEnemyShips = 6;
+        }
         private void UpdateBackgraund()
         {
             var currentNumber = Random.Shared.Next(1, 9);
@@ -537,7 +539,7 @@ namespace Asteroid.Gui
                 powerup.Y = position.Y;
                 powerup.Texture = game.Content.Load<Texture2D>(powerup.TextureName);
                 PowerUps.Add(powerup);
-            }                
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using Asteroid.Helpers;
+﻿using Asteroid.Guis;
+using Asteroid.Helpers;
 using Asteroid.Models.Characters;
 using Asteroid.Models.Characters.Nave;
 using Asteroid.Models.Elements;
 using Asteroid.Models.Screens;
-using Asteroid.Windows;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Asteroid.Gui
+namespace Asteroid.Guis
 {
     public class PreGameScreen : Screen
     {
@@ -75,7 +75,7 @@ namespace Asteroid.Gui
         {
             var keyboardState = Keyboard.GetState();
 
-            if (this.TimeBetweenTime >= this.TimeBetweenText)
+            if (TimeBetweenTime >= TimeBetweenText)
             {
                 CountDownText();
                 CheckEndCountDown();
@@ -92,12 +92,12 @@ namespace Asteroid.Gui
             TxtCount.Content = CurrentNumber.ToString();
             TimeBetweenTime = 0;
         }
-        
+
         private void CheckEndCountDown()
         {
             var CurrentNumber = int.Parse(TxtCount.Content) - 1;
             if (CurrentNumber < 0)
-            {                
+            {
                 game.currentScreen = new GameScreen(game);
                 game.currentScreen.LoadContent();
             }

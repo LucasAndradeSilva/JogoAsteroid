@@ -1,5 +1,5 @@
 ﻿using Asteroid.Enuns;
-using Asteroid.Gui;
+using Asteroid.Guis;
 using Asteroid.Helpers;
 using Asteroid.Models.Characters.Game;
 using Asteroid.Models.Elements;

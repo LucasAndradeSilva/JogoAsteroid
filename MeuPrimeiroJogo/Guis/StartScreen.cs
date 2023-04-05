@@ -9,20 +9,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Asteroid.Models.Screens;
-using Asteroid.Gui;
+using Asteroid.Guis;
 
-namespace Asteroid.Windows
+namespace Asteroid.Guis
 {
     public class StartScreen : Screen
-    {        
+    {
         Button BtnStart;
         Background Background;
         Text TxtStartTitulo;
         Text TxtStartSubTitulo;
-     
+
         public StartScreen(AsteroidGame game) : base(game)
         {
-            game.Window.Title = "Inicio";                        
+            game.Window.Title = "Inicio";
 
             BtnStart = new Button()
             {
@@ -51,7 +51,7 @@ namespace Asteroid.Windows
         }
 
         public override void LoadContent()
-        {         
+        {
             BtnStart.Texture = game.Content.Load<Texture2D>("images/btnStart");
             Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
 
@@ -66,11 +66,13 @@ namespace Asteroid.Windows
             MouseState mouseState = Mouse.GetState();
 
             //Muda cursor
-            BtnStart.Hover(mouseState, 
-                () => {
+            BtnStart.Hover(mouseState,
+                () =>
+                {
                     Mouse.SetCursor(MouseCursor.Hand);
                 },
-                () => {
+                () =>
+                {
                     Mouse.SetCursor(MouseCursor.Arrow);
                 }
             );
@@ -80,7 +82,7 @@ namespace Asteroid.Windows
             {
                 game.currentScreen = new PreGameScreen(game);
                 game.currentScreen.LoadContent();
-            });         
+            });
         }
 
         public override void Draw(SpriteBatch spriteBatch, GameTime gameTime)

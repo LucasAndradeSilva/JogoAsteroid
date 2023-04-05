@@ -48,5 +48,10 @@ namespace Asteroid.Helpers
         {
             spriteBatch.DrawString(text.SpriteFont, text.Content, text.Vector, text.Color, text.Roatation, text.Origin, text.Scale, text.SpriteEffects, text.LayerDepth);
         }
+
+        public static void DrawBackground(this SpriteBatch spriteBatch, Background background)
+        {                        
+            spriteBatch.Draw(background.Texture, background.Rectangle, background.Color);            
+        }
     }
 }

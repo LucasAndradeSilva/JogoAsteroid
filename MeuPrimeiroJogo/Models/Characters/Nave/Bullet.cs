@@ -35,18 +35,20 @@ namespace Asteroid.Models.Characters.Nave
                 this.ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
             }
         }
-        private void BulletShoot(int X, int Y, int Width, bool SpecialShoot = false)
+        private void BulletShoot(int X, int Y, int Width, Nave nave)
         {
             var bullet = new Bullet()
             {
                 X = X + Width / 2 - 4,
                 Y = Y,
                 Width = this.Width,
-                Heigth = this.Heigth                
+                Heigth = this.Heigth
             };
 
-            if (SpecialShoot)            
-                bullet.Movement = RandomMovimentExceptDown();            
+            if (nave.SpecialShoot && nave.Enemy)
+                bullet.Movement = RandomMovimentExceptUp();
+            else if (nave.SpecialShoot && !nave.Enemy)
+                bullet.Movement = RandomMovimentExceptDown();
 
             this.Bullets.Add(bullet);
 
@@ -84,12 +86,12 @@ namespace Asteroid.Models.Characters.Nave
         }        
         public EnumMovement RandomMovimentExceptDown()
         {
-            var movement = EnumMovement.Down;
+            var movement = EnumMovement.Up;
             var found = false;
             while (!found)
             {
                 movement = (EnumMovement)Random.Shared.Next(1, 8);
-                if (movement == EnumMovement.Up || movement == EnumMovement.LeftUp || movement == EnumMovement.RightUp || movement == EnumMovement.Right || movement == EnumMovement.Left)
+                if (movement == EnumMovement.Down || movement == EnumMovement.LeftDown || movement == EnumMovement.RightDown || movement == EnumMovement.Right || movement == EnumMovement.Left)
                 {
                     found = false;
                 }
@@ -101,21 +103,37 @@ namespace Asteroid.Models.Characters.Nave
 
             return movement;
         }
+
+        public EnumMovement RandomMovimentExceptUp()
+        {
+            var movement = EnumMovement.Down;
+            var found = false;
+            while (!found)
+            {
+                movement = (EnumMovement)Random.Shared.Next(1, 8);
+                if (movement == EnumMovement.Up || movement == EnumMovement.LeftUp || movement == EnumMovement.RightUp || movement == EnumMovement.Right || movement == EnumMovement.Left)
+                {
+                    found = false;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return movement;
+        }
         private void CreateShoots(int qtdShoots, Nave nave)
         {
             for (int i = 0; i < qtdShoots; i++)            
-                BulletShoot(nave.X, nave.Y, nave.Width, nave.SpecialShoot);            
+                BulletShoot(nave.X, nave.Y, nave.Width, nave);            
         }        
         public void CheckShoot(Nave nave)
         {
-            if (nave.IsBoss)
-            {
-                CreateShoots(Random.Shared.Next(1, 4), nave);
-            }
-            else
-            {                
-                CreateShoots(1, nave);
-            }
+            if (nave.IsBoss)            
+                CreateShoots(Random.Shared.Next(1, 4), nave);            
+            else            
+                CreateShoots(1, nave);            
         }
     }
 }
