@@ -20,7 +20,7 @@ namespace Asteroid.Gui.Guis
         public bool TwoPlayers = false;
         public bool IsMobile { get; set; }
 
-        public AsteroidGame(bool isMobile)
+        public AsteroidGame(bool isMobile = false)
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -34,9 +34,20 @@ namespace Asteroid.Gui.Guis
                 Name = "Guest"
             };
 
-            graphics.PreferredBackBufferWidth = 1000;
-            graphics.PreferredBackBufferHeight = 600;
-            graphics.IsFullScreen = false;
+            if (!IsMobile)
+            {
+                graphics.PreferredBackBufferWidth = 1000;
+                graphics.PreferredBackBufferHeight = 600;
+                graphics.IsFullScreen = false;                
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = GraphicsDevice.DisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsDevice.DisplayMode.Height;
+                graphics.ApplyChanges();
+
+            }
+
             graphics.ApplyChanges();
 
             base.Initialize();

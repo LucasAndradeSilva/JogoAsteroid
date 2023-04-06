@@ -51,42 +51,42 @@ namespace Asteroid.Gui.Models.Characters.Game
                     case EnumPowerUpType.Shield:
                         return new ShieldUp()
                         {
-                            TextureName = "images/escudoUp",
+                            TextureName = "Images/escudoUp",
                             Width = 50,
                             Heigth = 50,
                         };                    
                     case EnumPowerUpType.Velocity:
                         return new VelocityUp()
                         {
-                            TextureName = "images/velodidadeUp",
+                            TextureName = "Images/velodidadeUp",
                             Width = 50,
                             Heigth = 50,
                         };                                
                     case EnumPowerUpType.TripleShot:
                         return new TripleShotUp()
                         {
-                            TextureName = "images/tripleUp",
+                            TextureName = "Images/tripleUp",
                             Width = 50,
                             Heigth = 50,
                         };              
                     case EnumPowerUpType.Fire:
                         return new FireUp()
                         {
-                            TextureName = "images/fireUp",
+                            TextureName = "Images/fireUp",
                             Width = 50,
                             Heigth = 50,
                         };
                     case EnumPowerUpType.Life:
                         return new LifeUp()
                         {
-                            TextureName = "images/lifeUP",
+                            TextureName = "Images/lifeUP",
                             Width = 50,
                             Heigth = 50,
                         };              
                     case EnumPowerUpType.Nuclear:
                         return new NuclearUp()
                         {
-                            TextureName = "images/nuclearUp",    
+                            TextureName = "Images/nuclearUp",    
                             Width = 50,
                             Heigth = 50,
                         };              
@@ -123,14 +123,14 @@ namespace Asteroid.Gui.Models.Characters.Game
             nave.Immune = true;
             nave.Width = 94;
             nave.Heigth = 94;
-            nave.TextureName = "images/naveShilded";
+            nave.TextureName = "Images/naveShilded";
             Using = true;
         }
 
         public override void DisabledPower(Nave.Nave nave, GameScreen gameScreen)
         {
             nave.Immune = false;
-            nave.TextureName = "images/foguete";
+            nave.TextureName = "Images/foguete";
             nave.Width = 64;
             nave.Heigth = 64;
             Using = false;
@@ -140,14 +140,14 @@ namespace Asteroid.Gui.Models.Characters.Game
             nave.Immune = true;
             nave.Width = 94;
             nave.Heigth = 94;
-            nave.TextureName = "images/naveShilded";
+            nave.TextureName = "Images/naveShilded";
             Using = true;
         }
 
         public override void DisabledPower(Nave.Nave nave, GameScreenPlayers gameScreen)
         {
             nave.Immune = false;
-            nave.TextureName = "images/foguete";
+            nave.TextureName = "Images/foguete";
             nave.Width = 64;
             nave.Heigth = 64;
             Using = false;

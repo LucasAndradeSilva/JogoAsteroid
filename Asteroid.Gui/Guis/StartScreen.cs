@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Asteroid.Gui.Models.Screens;
 using Asteroid.Gui.Models.Elements;
+using Microsoft.Xna.Framework.Input.Touch;
 
 
 namespace Asteroid.Gui.Guis
@@ -24,13 +25,15 @@ namespace Asteroid.Gui.Guis
         public StartScreen(AsteroidGame game) : base(game)
         {
             game.Window.Title = "Inicio";
+            var WidthBtn = game.IsMobile ? 400 : 200;
+            var HeigthBtn = game.IsMobile ? 200 : 100;
 
             BtnStart = new Button()
             {
                 X = game.graphics.GetCenterX() - 60,
                 Y = game.graphics.GetCenterY() - 20,
-                Width = 200,
-                Heigth = 100
+                Width = WidthBtn,
+                Heigth = HeigthBtn
             };
             BtnStartTwoPlayer = new Button()
             {
@@ -44,15 +47,20 @@ namespace Asteroid.Gui.Guis
                 Width = game.graphics.PreferredBackBufferWidth,
                 Heigth = game.graphics.PreferredBackBufferHeight
             };
+
+            var StartTituloX = game.IsMobile ? game.graphics.GetCenterX() + 20 : game.graphics.GetCenterX() - 10;
+            
             TxtStartTitulo = new Text()
             {
-                X = game.graphics.GetCenterX() - 10,
+                X = StartTituloX,
                 Y = game.graphics.GetCenterY() - 80,
                 Content = "Asteroid Game"
             };
+
+            var StartSubX = game.IsMobile ? game.graphics.GetCenterX() + 20 : game.graphics.GetCenterX();
             TxtStartSubTitulo = new Text()
             {
-                X = game.graphics.GetCenterX(),
+                X = StartSubX,
                 Y = game.graphics.GetCenterY() - 40,
                 Content = "Criado por Lucas Andrade"
             };
@@ -72,30 +80,34 @@ namespace Asteroid.Gui.Guis
 
         public override void Update(GameTime gameTime)
         {
-            MouseState mouseState = Mouse.GetState();
+            var mouseState = Mouse.GetState();
+            var touchState = TouchPanel.GetState().FirstOrDefault();            
 
-            //Muda cursor
-            BtnStart.Hover(mouseState,
-                () =>
+            if (!game.IsMobile)
+            {
+                //Muda cursor
+                BtnStart.Hover(mouseState,
+                    () =>
+                    {
+                        Mouse.SetCursor(MouseCursor.Hand);
+                    },
+                    () =>
+                    {
+                        Mouse.SetCursor(MouseCursor.Arrow);
+                    }
+                );
+
+                BtnStartTwoPlayer.Click(game, touchState, mouseState, () =>
                 {
-                    Mouse.SetCursor(MouseCursor.Hand);
-                },
-                () =>
-                {
-                    Mouse.SetCursor(MouseCursor.Arrow);
-                }
-            );
+                    game.TwoPlayers = true;
+                    game.currentScreen = new PreGameScreen(game);
+                    game.currentScreen.LoadContent();
+                });
+            }
 
             //Clique no botão
-            BtnStart.Click(mouseState, () =>
+            BtnStart.Click(game, touchState, mouseState, () =>
             {
-                game.currentScreen = new PreGameScreen(game);
-                game.currentScreen.LoadContent();
-            });
-
-            BtnStartTwoPlayer.Click(mouseState, () =>
-            {
-                game.TwoPlayers = true;
                 game.currentScreen = new PreGameScreen(game);
                 game.currentScreen.LoadContent();
             });
@@ -108,7 +120,10 @@ namespace Asteroid.Gui.Guis
 
             // Desenha o botão de iniciar
             spriteBatch.DrawElement(BtnStart);
-            spriteBatch.DrawElement(BtnStartTwoPlayer);            
+            if (!game.IsMobile)
+            {
+                spriteBatch.DrawElement(BtnStartTwoPlayer);
+            }
 
             //Desenha Titulo
             spriteBatch.DrawText(TxtStartTitulo);

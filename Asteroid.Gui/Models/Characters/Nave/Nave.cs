@@ -11,6 +11,8 @@ using System.Runtime.Intrinsics.X86;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Input.Touch;
+using Asteroid.Gui.Helpers;
 
 namespace Asteroid.Gui.Models.Characters.Nave
 {
@@ -35,16 +37,16 @@ namespace Asteroid.Gui.Models.Characters.Nave
                 return this.TextureName;
             }
         }
-        public void Initialize(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
+        public void Initialize(TouchLocation touchLocation ,KeyboardState keyboardState, AsteroidGame game, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
         {
             PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
-            PlayerMovement(keyboardState, graphics);
+            PlayerMovement(touchLocation, keyboardState, game);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
-        public void Initialize(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreenPlayers gameScreen, Texture2D texture, GameTime gameTime)
+        public void Initialize(TouchLocation touchLocation, KeyboardState keyboardState, AsteroidGame game, GameScreenPlayers gameScreen, Texture2D texture, GameTime gameTime)
         {
             PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
-            PlayerMovement(keyboardState, graphics);
+            PlayerMovement(touchLocation, keyboardState, game);
             CheckUnhit(texture, gameTime.ElapsedGameTime);
         }
         public void Initialize2(KeyboardState keyboardState, GraphicsDeviceManager graphics, GameScreenPlayers gameScreen, Texture2D texture, GameTime gameTime)
@@ -143,26 +145,37 @@ namespace Asteroid.Gui.Models.Characters.Nave
                 }
             }
         }
-        public void PlayerMovement(KeyboardState keyboardState, GraphicsDeviceManager graphics)
+        public void PlayerMovement(TouchLocation touchLocation, KeyboardState keyboardState, AsteroidGame game)
         {
-            if (keyboardState.IsKeyDown(Keys.Left))
+            if (!game.IsMobile)
             {
-                this.X -= this.Speed;
+                if (keyboardState.IsKeyDown(Keys.Left))
+                {
+                    this.X -= this.Speed;
+                }
+                if (keyboardState.IsKeyDown(Keys.Right))
+                {
+                    this.X += this.Speed;
+                }
+                if (keyboardState.IsKeyDown(Keys.Up))
+                {
+                    this.Y -= this.Speed;
+                }
+                if (keyboardState.IsKeyDown(Keys.Down))
+                {
+                    this.Y += this.Speed;
+                }
             }
-            if (keyboardState.IsKeyDown(Keys.Right))
+            else
             {
-                this.X += this.Speed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Up))
-            {   
-                this.Y -= this.Speed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Down))
-            {
-                this.Y += this.Speed;
-            }
+                var touchX = (int)touchLocation.Position.X;
+                var touchY = (int)touchLocation.Position.Y - 200;
 
-            ScreenLimit(graphics);
+               this.X = touchX <= 0 ? this.X : touchX;
+               this.Y = touchY <= 0 ? this.Y : touchY;
+            }            
+
+            ScreenLimit(game.graphics);
         }
         public void PlayerMovement2(KeyboardState keyboardState, GraphicsDeviceManager graphics)
         {

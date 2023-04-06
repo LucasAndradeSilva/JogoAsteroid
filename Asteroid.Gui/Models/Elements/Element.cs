@@ -1,7 +1,9 @@
 ﻿using Asteroid.Gui.Enuns;
+using Asteroid.Gui.Guis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,12 +47,22 @@ namespace Asteroid.Gui.Models.Elements
         public Texture2D Texture { get; set; }
         public SpriteFont SpriteFont { get; set; }
 
-        public void Click(MouseState mouseState, Action action)
+        public void Click(AsteroidGame game, TouchLocation touchLocation, MouseState mouseState, Action action)
         {
-            if (mouseState.LeftButton == ButtonState.Pressed && this.Rectangle.Contains(mouseState.Position))
+            if (!game.IsMobile)
             {
-                action();
+                if (mouseState.LeftButton == ButtonState.Pressed && this.Rectangle.Contains(mouseState.Position))
+                {
+                    action();
+                }
             }
+            else
+            {
+                if (touchLocation.State == TouchLocationState.Pressed && this.Rectangle.Contains(touchLocation.Position))
+                {
+                    action();
+                }
+            }            
         }
 
         public bool IsHover(MouseState mouseState)

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Asteroid.Gui.Models.Screens;
 using Asteroid.Gui.Models.Players;
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Asteroid.Gui.Guis
 {
@@ -37,7 +38,7 @@ namespace Asteroid.Gui.Guis
 
         bool NameCompleted {
             get {
-                return game.player.Name != "Guest" && !string.IsNullOrEmpty(game.player.Name.RemoveSpace());
+                return game.player.Name != "Guest" && !string.IsNullOrEmpty(game.player.Name.RemoveSpace()) || game.IsMobile;
             }
             set
             {
@@ -115,11 +116,11 @@ namespace Asteroid.Gui.Guis
         {
             ArialFont = game.Content.Load<SpriteFont>("fontes/arial");
 
-            BtnRestart.Texture = game.Content.Load<Texture2D>("images/btnStart");
-            BtnSave.Texture = game.Content.Load<Texture2D>("images/btnStart");
-            BtnStartWrite.Texture = game.Content.Load<Texture2D>("images/btnStart");
+            BtnRestart.Texture = game.Content.Load<Texture2D>("Images/btnStart");
+            BtnSave.Texture = game.Content.Load<Texture2D>("Images/btnStart");
+            BtnStartWrite.Texture = game.Content.Load<Texture2D>("Images/btnStart");
 
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
+            Background.Texture = game.Content.Load<Texture2D>("Images/fundo1");
 
             TxtStartTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
             TxtStartSubTitulo.SpriteFont = ArialFont;
@@ -152,6 +153,9 @@ namespace Asteroid.Gui.Guis
                 spriteBatch.DrawText(TxtStartSubTitulo);
 
                 //Desenha Score
+                if (!game.IsMobile)
+                {
+
                 var lastY = game.graphics.GetCenterY() + 130;
                 if (PlayersScore is not null)
                 {
@@ -187,6 +191,8 @@ namespace Asteroid.Gui.Guis
                         spriteBatch.DrawText(TxtPosition);
                     }
                 }
+                }
+
 
             }
             else
@@ -220,6 +226,7 @@ namespace Asteroid.Gui.Guis
         private void ActionCompleteName(GameTime gameTime)
         {
             var mouseState = Mouse.GetState();
+            var touchState = TouchPanel.GetState().FirstOrDefault();
 
             TxtInputName.Update(gameTime);
             
@@ -238,7 +245,7 @@ namespace Asteroid.Gui.Guis
             {
                 if (TimeElapsedClick > TimeBetweenClick)
                 {
-                    BtnSave.Click(mouseState, () =>
+                    BtnSave.Click(game, touchState, mouseState, () =>
                     {
                         game.player.Name = TxtInputName.Text;
 
@@ -252,7 +259,7 @@ namespace Asteroid.Gui.Guis
                 }
             }
 
-            BtnStartWrite.Click(mouseState, () =>
+            BtnStartWrite.Click(game, touchState, mouseState, () =>
             {
                 TxtInputName.Activate();
             });
@@ -261,6 +268,7 @@ namespace Asteroid.Gui.Guis
         private void ActionGameOver(GameTime gameTime)
         {
             var mouseState = Mouse.GetState();
+            var touchState = TouchPanel.GetState().FirstOrDefault();
 
             //Muda cursor
             BtnRestart.Hover(mouseState,
@@ -277,7 +285,7 @@ namespace Asteroid.Gui.Guis
             //Clique no botão
             if (TimeElapsedClick > TimeBetweenClick)
             {
-                BtnRestart.Click(mouseState, () =>
+                BtnRestart.Click(game, touchState, mouseState, () =>
                 {
                     game.player.Score = 0;
                     game.currentScreen = new PreGameScreen(game);
@@ -290,7 +298,7 @@ namespace Asteroid.Gui.Guis
                 TimeElapsedClick += (int)gameTime.ElapsedGameTime.TotalMilliseconds;
             }
 
-            if (PlayersScore is null)
+            if (PlayersScore is null && !game.IsMobile)
             {
                 UpdateScores(true);
                 PlayersScore = FileHelper.ReadFile(game.player.CompleteFileNameScores).ToObject<List<Player>>();

@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Asteroid.Gui.Guis { 
 
@@ -58,32 +58,38 @@ namespace Asteroid.Gui.Guis {
         {
             game.Window.Title = "Asteroid Game";
 
+            var SizeNave = game.IsMobile ? 100 : 64;
+            var SizeLife = game.IsMobile ? 45 : 15;
+            var WidthBullet = game.IsMobile ? 24 : 8;
+            var HigthBullet = game.IsMobile ? 48 : 16;
+            var TimeBetweenShots = game.IsMobile ? 1500 : 300;
+            var SpeedShoot = game.IsMobile ? 15 : 8;
             Nave = new Nave()
             {
-                Width = 64,
-                Heigth = 64,
+                Width = SizeNave,
+                Heigth = SizeNave,
                 Speed = 5,
-                Size = 64,
+                Size = SizeNave,
                 Y = game.graphics.PreferredBackBufferHeight / 2,
                 X = game.graphics.PreferredBackBufferWidth / 2,
                 Life = new Life()
                 {
                     Y = 10,
                     X = game.graphics.PreferredBackBufferWidth,
-                    Width = 15,
-                    Heigth = 15,
-                    Texture = game.Content.Load<Texture2D>("images/life")
+                    Width = SizeLife,
+                    Heigth = SizeLife,
+                    Texture = game.Content.Load<Texture2D>("Images/life")
                 },
                 Bullet = new Bullet()
                 {
-                    Speed = 8,
-                    Width = 8,
-                    Heigth = 16,
-                    TimeBetweenShots = 300,
+                    Speed = SpeedShoot,
+                    Width = WidthBullet,
+                    Heigth = HigthBullet,
+                    TimeBetweenShots = TimeBetweenShots,
                     Bullets = new List<Bullet>(),
                 },
                 Powers = new List<PowerUp>(),
-                TextureName = "images/foguete"
+                TextureName = "Images/foguete"
             };
 
             Nave.Life.CreateLifes(4);
@@ -111,26 +117,27 @@ namespace Asteroid.Gui.Guis {
         public override void LoadContent()
         {
             NaveTexture = game.Content.Load<Texture2D>(Nave.TextureName);
-            AsteroidRock.Texture = game.Content.Load<Texture2D>("images/asteroid");
+            AsteroidRock.Texture = game.Content.Load<Texture2D>("Images/asteroid");
             Nave.Texture = NaveTexture;
-            Nave.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
+            Nave.Bullet.Texture = game.Content.Load<Texture2D>("Images/tiro");
 
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
+            Background.Texture = game.Content.Load<Texture2D>("Images/fundo1");
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
 
-            HitNaveTexture = game.Content.Load<Texture2D>("images/hitNave");
+            HitNaveTexture = game.Content.Load<Texture2D>("Images/hitNave");
 
-            HitEnemyTexture = game.Content.Load<Texture2D>("images/inimigaHit");
+            HitEnemyTexture = game.Content.Load<Texture2D>("Images/inimigaHit");
 
-            LifeTexture = game.Content.Load<Texture2D>("images/life");
-            EnemyTexture = game.Content.Load<Texture2D>("images/inimiga");
+            LifeTexture = game.Content.Load<Texture2D>("Images/life");
+            EnemyTexture = game.Content.Load<Texture2D>("Images/inimiga");
         }
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
+            var touchState = TouchPanel.GetState().FirstOrDefault();
 
-            Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime);
+            Nave.Initialize(touchState, keyboardState, game, this, NaveTexture, gameTime);
 
             AsteroidRock.CreateAsteroid(game.graphics);
 
@@ -152,6 +159,15 @@ namespace Asteroid.Gui.Guis {
                 }
             });
 
+            if (!game.IsMobile)
+            {
+                Nave.Bullet.BulletShoot(keyboardState, gameTime.ElapsedGameTime, Nave);
+            }
+            else
+            {
+                Nave.Bullet.AutoBulletShoot(gameTime.ElapsedGameTime, Nave);
+            }
+
             Nave.Bullet.BulletShoot(keyboardState, gameTime.ElapsedGameTime, Nave);
             Nave.Bullet.BulletShootMovement(game.graphics, EnumMovement.Up, (obj) =>
             {
@@ -162,7 +178,7 @@ namespace Asteroid.Gui.Guis {
                 {
                     if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle) && !AsteroidRock.Asteroids[j].Destroyed)
                     {
-                        AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("images/explosao");
+                        AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("Images/explosao");
                         AsteroidRock.Asteroids[j].Destroyed = true;
 
                         Nave.Bullet.Bullets.Remove(bullet);
@@ -291,7 +307,12 @@ namespace Asteroid.Gui.Guis {
                     {
                         PowerUps[i].X = game.graphics.PreferredBackBufferWidth - 40;
                         PowerUps[i].Y = game.graphics.PreferredBackBufferHeight - 60;
-                        Nave.Powers.Add(PowerUps[i]);
+
+                        if (game.IsMobile)                        
+                            PowerUps[i].UsePowerUp(Nave, this);                        
+                        else                        
+                            Nave.Powers.Add(PowerUps[i]);
+                        
 
                         PowerUps.RemoveAt(0);
                     }
@@ -364,7 +385,7 @@ namespace Asteroid.Gui.Guis {
             // Desenha os tiros
             foreach (var bullet in Nave.Bullet.Bullets)
             {
-                bullet.Texture = Nave.Bullet.Texture;
+                bullet.Texture = Nave.Bullet.Texture;                
                 spriteBatch.DrawElement(bullet);
             }
 
@@ -375,7 +396,7 @@ namespace Asteroid.Gui.Guis {
 
                 foreach (var bullet in nave.Bullet.Bullets)
                 {
-                    bullet.Texture = Nave.Bullet.Texture;
+                    bullet.Texture = Nave.Bullet.Texture;                    
                     spriteBatch.DrawElement(bullet);
                 }
             }
@@ -394,6 +415,7 @@ namespace Asteroid.Gui.Guis {
         }
         private void GameOver()
         {
+
             game.currentScreen = new GameOver(game);
             game.currentScreen.LoadContent();
             return;
@@ -412,6 +434,10 @@ namespace Asteroid.Gui.Guis {
                         var navesQtd = Random.Shared.Next(1, maxEnemyShips);
                         for (int i = 0; i < navesQtd; i++)
                         {
+                            var BulletEnemyWidth = game.IsMobile ? Random.Shared.Next(16, 32) : 8;
+                            var BulletEnemyHigth = game.IsMobile ? Random.Shared.Next(32, 62) : 16;
+                            var SpeedShoot = game.IsMobile ? 20 : 8;
+
                             var naveEnemy = new Nave()
                             {
                                 Points = Random.Shared.Next(25, 50),
@@ -426,9 +452,9 @@ namespace Asteroid.Gui.Guis {
                                 },
                                 Bullet = new Bullet()
                                 {
-                                    Speed = 8,
-                                    Width = 8,
-                                    Heigth = 16,
+                                    Speed = SpeedShoot,
+                                    Width = BulletEnemyWidth,
+                                    Heigth = BulletEnemyHigth,
                                     TimeBetweenShots = 1000,
                                     Bullets = new List<Bullet>(),
                                 },
@@ -436,7 +462,8 @@ namespace Asteroid.Gui.Guis {
                                 Texture = EnemyTexture
                             };
 
-                            naveEnemy.Size = Random.Shared.Next(74, 94);
+
+                            naveEnemy.Size = game.IsMobile ? Random.Shared.Next(100, 150) : Random.Shared.Next(74, 94);
                             naveEnemy.Width = naveEnemy.Size;
                             naveEnemy.Heigth = naveEnemy.Size;
                             naveEnemy.Life.CreateLifes(Random.Shared.Next(1, 3));
@@ -451,6 +478,9 @@ namespace Asteroid.Gui.Guis {
                 {
                     UpdateBackgraund();
                     ClearAsteroids();
+
+                    var BulletBossWidth = game.IsMobile ? Random.Shared.Next(44, 54)  : Random.Shared.Next(24, 34);
+                    var BulletBossHigth = game.IsMobile ? Random.Shared.Next(64, 74)  : Random.Shared.Next(48, 68);
 
                     Boss = new Nave()
                     {
@@ -467,19 +497,19 @@ namespace Asteroid.Gui.Guis {
                         Bullet = new Bullet()
                         {
                             Speed = 8,
-                            Width = Random.Shared.Next(10, 16),
-                            Heigth = Random.Shared.Next(16, 24),
+                            Width = BulletBossWidth,
+                            Heigth = BulletBossHigth,
                             TimeBetweenShots = Random.Shared.Next(700, 1000),
                             Bullets = new List<Bullet>(),
                         },
                         Enemy = true,
                         IsBoss = true,
                         SpecialShoot = true,
-                        TextureName = $"images/boss{Random.Shared.Next(1, 5)}",
+                        TextureName = $"Images/boss{Random.Shared.Next(1, 5)}",
                     };
 
                     Boss.Texture = game.Content.Load<Texture2D>(Boss.TextureName);
-                    Boss.Size = Random.Shared.Next(100, 150);
+                    Boss.Size = game.IsMobile ? Random.Shared.Next(200, 250) : Random.Shared.Next(100, 150); 
                     Boss.Width = Boss.Size;
                     Boss.Heigth = Boss.Size;
 
@@ -531,7 +561,7 @@ namespace Asteroid.Gui.Guis {
 
             lastBackgroundNumber = currentNumber;
 
-            Background.Texture = game.Content.Load<Texture2D>($"images/fundo{currentNumber}");
+            Background.Texture = game.Content.Load<Texture2D>($"Images/fundo{currentNumber}");
         }
         private void CheckPowerUp(Microsoft.Xna.Framework.Rectangle position)
         {

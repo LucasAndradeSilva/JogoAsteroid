@@ -6,6 +6,7 @@ using Asteroid.Gui.Models.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,12 +35,14 @@ namespace Asteroid.Gui.Guis
 
             Mouse.SetCursor(MouseCursor.Arrow);
 
+            var SizeNave = game.IsMobile ? 100 : 64;
+
             Nave = new Nave()
             {
-                Width = 64,
-                Heigth = 64,
+                Width = SizeNave,
+                Heigth = SizeNave,
                 Speed = 5,
-                Size = 64,
+                Size = SizeNave,
                 X = game.graphics.GetCenterX() + 65,
                 Y = game.graphics.GetCenterY() + 150,
             };
@@ -74,9 +77,9 @@ namespace Asteroid.Gui.Guis
 
         public override void LoadContent()
         {
-            Nave.Texture = game.Content.Load<Texture2D>("images/foguete");
-            Nave2.Texture = game.Content.Load<Texture2D>("images/foguete2");
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
+            Nave.Texture = game.Content.Load<Texture2D>("Images/foguete");
+            Nave2.Texture = game.Content.Load<Texture2D>("Images/foguete2");
+            Background.Texture = game.Content.Load<Texture2D>("Images/fundo1");
             TxtCount.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
         }
@@ -84,6 +87,7 @@ namespace Asteroid.Gui.Guis
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
+            var touchState = TouchPanel.GetState().FirstOrDefault();
 
             if (TimeBetweenTime >= TimeBetweenText)
             {
@@ -91,7 +95,7 @@ namespace Asteroid.Gui.Guis
                 CheckEndCountDown();
             }
 
-            Nave.PlayerMovement(keyboardState, game.graphics);
+            Nave.PlayerMovement(touchState, keyboardState, game);
             if (game.TwoPlayers)
             {
                 Nave2.PlayerMovement2(keyboardState, game.graphics);

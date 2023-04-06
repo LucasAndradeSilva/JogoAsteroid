@@ -18,6 +18,7 @@ using Asteroid.Gui.Models.Characters.Game;
 using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Xna.Framework.Input.Touch;
 
 namespace Asteroid.Gui.Guis
 {
@@ -83,7 +84,7 @@ namespace Asteroid.Gui.Guis
                     X = game.graphics.PreferredBackBufferWidth - 40,
                     Width = 15,
                     Heigth = 15,
-                    Texture = game.Content.Load<Texture2D>("images/life")
+                    Texture = game.Content.Load<Texture2D>("Images/life")
                 },
                 Bullet = new Bullet()
                 {
@@ -94,7 +95,7 @@ namespace Asteroid.Gui.Guis
                     Bullets = new List<Bullet>(),
                 },
                 Powers = new List<PowerUp>(),
-                TextureName = "images/foguete"
+                TextureName = "Images/foguete"
             };
             Nave2 = new Nave()
             {
@@ -110,7 +111,7 @@ namespace Asteroid.Gui.Guis
                     X = game.graphics.PreferredBackBufferWidth - 100,
                     Width = 15,
                     Heigth = 15,
-                    Texture = game.Content.Load<Texture2D>("images/life")
+                    Texture = game.Content.Load<Texture2D>("Images/life")
                 },
                 Bullet = new Bullet()
                 {
@@ -121,7 +122,7 @@ namespace Asteroid.Gui.Guis
                     Bullets = new List<Bullet>(),
                 },
                 Powers = new List<PowerUp>(),
-                TextureName = "images/foguete2"
+                TextureName = "Images/foguete2"
             };
 
             Nave.Life.CreateLifes(4);
@@ -160,31 +161,32 @@ namespace Asteroid.Gui.Guis
         public override void LoadContent()
         {
             NaveTexture = game.Content.Load<Texture2D>(Nave.TextureName);
-            AsteroidRock.Texture = game.Content.Load<Texture2D>("images/asteroid");
+            AsteroidRock.Texture = game.Content.Load<Texture2D>("Images/asteroid");
             Nave.Texture = NaveTexture;
             Nave2.Texture = NaveTexture;
-            Nave.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
-            Nave2.Bullet.Texture = game.Content.Load<Texture2D>("images/tiro");
+            Nave.Bullet.Texture = game.Content.Load<Texture2D>("Images/tiro");
+            Nave2.Bullet.Texture = game.Content.Load<Texture2D>("Images/tiro");
 
-            Background.Texture = game.Content.Load<Texture2D>("images/fundo1");
+            Background.Texture = game.Content.Load<Texture2D>("Images/fundo1");
 
             TxtScore.SpriteFont = game.Content.Load<SpriteFont>("fontes/titulo");
             TxtLife.SpriteFont = game.Content.Load<SpriteFont>("fontes/arial");
             TxtLife2.SpriteFont = game.Content.Load<SpriteFont>("fontes/arial");
 
-            HitNaveTexture = game.Content.Load<Texture2D>("images/hitNave");
+            HitNaveTexture = game.Content.Load<Texture2D>("Images/hitNave");
 
-            HitEnemyTexture = game.Content.Load<Texture2D>("images/inimigaHit");
+            HitEnemyTexture = game.Content.Load<Texture2D>("Images/inimigaHit");
 
-            LifeTexture = game.Content.Load<Texture2D>("images/life");
-            EnemyTexture = game.Content.Load<Texture2D>("images/inimiga");
+            LifeTexture = game.Content.Load<Texture2D>("Images/life");
+            EnemyTexture = game.Content.Load<Texture2D>("Images/inimiga");
         }
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
+            var touchState = TouchPanel.GetState().FirstOrDefault();
 
-            Task.Run(() => Nave.Initialize(keyboardState, game.graphics, this, NaveTexture, gameTime));
+            Task.Run(() => Nave.Initialize(touchState, keyboardState, game, this, NaveTexture, gameTime));
 
             if (game.TwoPlayers)
             {
@@ -242,7 +244,7 @@ namespace Asteroid.Gui.Guis
                 {
                     if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle) && !AsteroidRock.Asteroids[j].Destroyed)
                     {
-                        AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("images/explosao");
+                        AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("Images/explosao");
                         AsteroidRock.Asteroids[j].Destroyed = true;
 
                         Nave.Bullet.Bullets.Remove(bullet);
@@ -315,7 +317,7 @@ namespace Asteroid.Gui.Guis
                     {
                         if (bullet.CheckCollision(AsteroidRock.Asteroids[j].Rectangle) && !AsteroidRock.Asteroids[j].Destroyed)
                         {
-                            AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("images/explosao");
+                            AsteroidRock.Asteroids[j].Texture = game.Content.Load<Texture2D>("Images/explosao");
                             AsteroidRock.Asteroids[j].Destroyed = true;
 
                             Nave2.Bullet.Bullets.Remove(bullet);
@@ -696,7 +698,7 @@ namespace Asteroid.Gui.Guis
                         Enemy = true,
                         IsBoss = true,
                         SpecialShoot = true,
-                        TextureName = $"images/boss{Random.Shared.Next(1, 5)}",
+                        TextureName = $"Images/boss{Random.Shared.Next(1, 5)}",
                     };
 
                     Boss.Texture = game.Content.Load<Texture2D>(Boss.TextureName);
@@ -752,7 +754,7 @@ namespace Asteroid.Gui.Guis
 
             lastBackgroundNumber = currentNumber;
 
-            Background.Texture = game.Content.Load<Texture2D>($"images/fundo{currentNumber}");
+            Background.Texture = game.Content.Load<Texture2D>($"Images/fundo{currentNumber}");
         }
         private void CheckPowerUp(Microsoft.Xna.Framework.Rectangle position)
         {
