@@ -18,11 +18,13 @@ namespace Asteroid.Gui.Guis
         public Screen currentScreen;
         public Player player;
         public bool TwoPlayers = false;
+        public bool IsMobile { get; set; }
 
-        public AsteroidGame()
+        public AsteroidGame(bool isMobile)
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";            
+            Content.RootDirectory = "Content";
+            IsMobile = isMobile;
         }
 
         protected override void Initialize()
