@@ -55,8 +55,12 @@ namespace Asteroid.Gui.Guis {
         #endregion
 
         public GameScreen(AsteroidGame game) : base(game)
-        {
+        {            
             game.Window.Title = "Asteroid Game";
+
+            maxRock = game.IsMobile ? 3 : 6;
+            maxEnemyShips = game.IsMobile ? 3 : 6;
+            limitEnemyShips = game.IsMobile ? 6 : 12;
 
             var SizeNave = game.IsMobile ? 100 : 64;
             var SizeLife = game.IsMobile ? 45 : 15;

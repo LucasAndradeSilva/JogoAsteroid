@@ -50,12 +50,15 @@ namespace Asteroid.Gui.Guis
         {
             game.Window.Title = "Score";
 
+            var WidthBtn = game.IsMobile ? 400 : 200;
+            var HeigthBtn = game.IsMobile ? 200 : 100;
+
             BtnRestart = new Button()
             {
                 X = game.graphics.GetCenterX(),
                 Y = game.graphics.GetCenterY() + 40,
-                Width = 200,
-                Heigth = 100
+                Width = WidthBtn,
+                Heigth = HeigthBtn
             };
             BtnSave = new Button()
             {
@@ -123,7 +126,7 @@ namespace Asteroid.Gui.Guis
             Background.Texture = game.Content.Load<Texture2D>("Images/fundo1");
 
             TxtStartTitulo.SpriteFont = game.Content.Load<SpriteFont>("fontes/super");
-            TxtStartSubTitulo.SpriteFont = ArialFont;
+            TxtStartSubTitulo.SpriteFont = game.IsMobile ? game.Content.Load<SpriteFont>("fontes/titulo") : ArialFont;
 
             TxtInputName.SpriteFont = ArialFont;
 
