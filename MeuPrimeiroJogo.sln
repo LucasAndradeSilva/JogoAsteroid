@@ -5,6 +5,10 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteroid", "MeuPrimeiroJogo\Asteroid.csproj", "{BF3495B3-C14D-40DD-8781-DE5CF1602107}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Asteroid.Gui", "Asteroid.Gui\Asteroid.Gui.csproj", "{64456362-D26C-4883-9CFF-B17B0EB1ED24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Asteroid.Android", "Asteroid.Android\Asteroid.Android.csproj", "{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,16 @@ Global
 		{BF3495B3-C14D-40DD-8781-DE5CF1602107}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF3495B3-C14D-40DD-8781-DE5CF1602107}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF3495B3-C14D-40DD-8781-DE5CF1602107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64456362-D26C-4883-9CFF-B17B0EB1ED24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64456362-D26C-4883-9CFF-B17B0EB1ED24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64456362-D26C-4883-9CFF-B17B0EB1ED24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64456362-D26C-4883-9CFF-B17B0EB1ED24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE535CDF-71E0-4DCA-96E3-1E353ADC1940}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
