@@ -29,7 +29,6 @@ namespace Asteroid.RedeNeural.Learning
             currentState[3] = nearestRock?.X ?? 0;
             currentState[4] = nearestRock?.Y ?? 0; 
 
-
             double[] action = IA.ActivationNetwork.Compute(currentState);
 
             var maxProbabilityIndex = action.IndexOf(action.Max());

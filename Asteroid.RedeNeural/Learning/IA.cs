@@ -9,6 +9,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Asteroid.RedeNeural.Learning
 {
     public class IA
@@ -16,19 +17,20 @@ namespace Asteroid.RedeNeural.Learning
         // Definir as constantes da rede neural
         public int INPUT_SIZE = 5; // tamanho da entrada da rede neural (por exemplo, posição x, posição y, velocidade posição do inimigo mais próximo x, posição do inimigo mais próximo y)
         public int OUTPUT_SIZE = 4; // tamanho da saída da rede neural (movimentação para esquerda, direita, cima ou baixo)
-        public int HIDDEN_LAYER_SIZE = 9; // tamanho da camada oculta da rede neural
+        public int HIDDEN_LAYER_SIZE = 20; // tamanho da camada oculta da rede neural
         public int PositionIndex { get; set; }
 
         public double[][] input { get; set; }
         public double[][] output { get; set; }
 
-        public double learningRate { get; set; } = 0.01;
+        public double learningRate { get; set; } = 0.1;
         public double momentum { get; set; } = 0.9;
-        public double epoch { get; set; } = 10000;
+        public double epoch { get; set; } = 1000;
 
         public bool Trained { get; set; }
 
         public ActivationNetwork ActivationNetwork { get; set; }
+        
         public IA CreateIA()
         {            
             // Inicializar a rede neural
@@ -63,6 +65,20 @@ namespace Asteroid.RedeNeural.Learning
             }
         }
 
+        public void SaveBaseTrained()
+        {
+            var modelName = $"training_{DateTime.Now.Ticks}.bin";
+            var modelDirectory = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA");
+            var modelFolder = Path.Combine(modelDirectory, modelName);
+
+            FileHelper.EnsureDirectoryExists(modelDirectory);
+
+            using (FileStream fileStream = new FileStream(modelFolder, FileMode.Create))
+            {
+                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                binaryFormatter.Serialize(fileStream, ActivationNetwork);
+            }
+        }
         public static ActivationNetwork LoadLastModel()
         {
             var modelDirectory = Path.Combine(Environment.CurrentDirectory, "ModelosIA");
@@ -70,5 +86,14 @@ namespace Asteroid.RedeNeural.Learning
             var network = Accord.IO.Serializer.Load<ActivationNetwork>(lastModel);
             return network;
         }
+
+        public bool HasBaseTrained()
+        {
+            var modelDirectory = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA");
+            var files = Directory.GetFiles(modelDirectory);
+            var hasBaseTrained = (files?.Count() ?? 0) > 0;
+            Trained = hasBaseTrained;
+            return hasBaseTrained;
+        }       
     }
 }

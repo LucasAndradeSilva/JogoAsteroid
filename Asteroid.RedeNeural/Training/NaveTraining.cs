@@ -80,6 +80,6 @@ namespace Asteroid.RedeNeural.Training
             network.Trained = true;
 
             return network;
-        }
+        }        
     }
 }

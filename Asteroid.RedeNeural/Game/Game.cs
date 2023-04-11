@@ -231,6 +231,14 @@ namespace Asteroid.RedeNeural.Game
 
             if (!IA.Trained)
             {
+                //Verifica se já tem uma base de trino e trina a IA nas configurações atuais
+                if (IA.HasBaseTrained())
+                {
+                    IA = NaveTraining.TrainingMoviments(IA);
+                    IA.ActivationNetwork = IA.LoadLastModel();
+                    return;
+                }         
+                
                 Nave.PlayerMovement(touchState, keyboardState);
 
                 if (TimeElpasendTraining > TimeBetweenTraining)
@@ -243,6 +251,7 @@ namespace Asteroid.RedeNeural.Game
 
                 if (IA.PositionIndex >= 1000)
                 {
+                    IA.SaveBaseTrained();
                     IA = NaveTraining.TrainingMoviments(IA);
                     IA.ActivationNetwork = IA.LoadLastModel();
                 }

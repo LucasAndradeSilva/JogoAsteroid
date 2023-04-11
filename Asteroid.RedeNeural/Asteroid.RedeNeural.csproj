@@ -15,15 +15,26 @@
     <None Remove="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <COMReference Include="{215d64d2-031c-33c7-96e3-61794cd1ee61}">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>4</VersionMinor>
+      <VersionMajor>2</VersionMajor>
+      <Guid>215d64d2-031c-33c7-96e3-61794cd1ee61</Guid>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Accord" Version="3.8.0" />
+    <PackageReference Include="Accord.Controls" Version="3.8.0" />
     <PackageReference Include="Accord.Neuro" Version="3.8.0" />
     <PackageReference Include="Accord.Statistics" Version="3.8.0" />
+    <PackageReference Include="ConsoleGraphics" Version="0.1.4" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
+    <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asteroid.Gui\Asteroid.Gui.csproj" />
