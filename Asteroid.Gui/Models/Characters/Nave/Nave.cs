@@ -177,6 +177,27 @@ namespace Asteroid.Gui.Models.Characters.Nave
 
             ScreenLimit(game.graphics);
         }
+        public void PlayerMovement(TouchLocation touchLocation, KeyboardState keyboardState)
+        {
+            
+            if (keyboardState.IsKeyDown(Keys.Left))
+            {
+                this.X -= this.Speed;
+            }
+            if (keyboardState.IsKeyDown(Keys.Right))
+            {
+                this.X += this.Speed;
+            }
+            if (keyboardState.IsKeyDown(Keys.Up))
+            {
+                this.Y -= this.Speed;
+            }
+            if (keyboardState.IsKeyDown(Keys.Down))
+            {
+                this.Y += this.Speed;
+            }
+                     
+        }
         public void PlayerMovement2(KeyboardState keyboardState, GraphicsDeviceManager graphics)
         {
             if (keyboardState.IsKeyDown(Keys.A))

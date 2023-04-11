@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Asteroid.Gui.Models.Screens;
 using Asteroid.Gui.Models.Players;
 using Microsoft.Xna.Framework.Input;
+using System.Data.SqlTypes;
 
 namespace Asteroid.Gui.Guis
 {
@@ -17,6 +18,7 @@ namespace Asteroid.Gui.Guis
         public SpriteBatch spriteBatch;
         public Screen currentScreen;
         public Player player;
+        public Func<dynamic, dynamic> ActionScreen;
         public bool TwoPlayers = false;
         public bool IsMobile { get; set; }
 
@@ -26,6 +28,14 @@ namespace Asteroid.Gui.Guis
             Content.RootDirectory = "Content";
             IsMobile = isMobile;
         }
+
+        public AsteroidGame(Func<dynamic, dynamic> action)
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            ActionScreen = action;
+        }
+
 
         protected override void Initialize()
         {
@@ -56,8 +66,13 @@ namespace Asteroid.Gui.Guis
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            currentScreen = new StartScreen(this);
-            currentScreen.LoadContent();
+
+            if (ActionScreen is not null)
+                currentScreen = ActionScreen(this) as Screen;            
+            else            
+                currentScreen = new StartScreen(this);
+                currentScreen.LoadContent();            
+            
             base.LoadContent();
         }
 
