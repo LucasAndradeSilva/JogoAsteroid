@@ -585,7 +585,7 @@ namespace Asteroid.Gui.Guis
             if (game.TwoPlayers)
             {
                 for (int i = 0; i < Nave2.Bullet.Bullets.Count; i++)
-                {
+                { 
                     Nave2.Bullet.Bullets[i].Texture = Nave2.Bullet.Texture;
                     spriteBatch.DrawElement(Nave2.Bullet.Bullets[i]);
                 }                

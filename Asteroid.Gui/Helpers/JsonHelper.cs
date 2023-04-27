@@ -11,7 +11,8 @@ namespace Asteroid.Gui.Helpers
 	public static class JsonHelper
 	{
 		private static JsonSerializerOptions JsonSerializerOptions = new JsonSerializerOptions() {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+			DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+			PropertyNameCaseInsensitive = true,
         };
 		public static string ToJson(this object obj)
 		{

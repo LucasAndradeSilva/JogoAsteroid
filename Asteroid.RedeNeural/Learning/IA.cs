@@ -15,20 +15,20 @@ namespace Asteroid.RedeNeural.Learning
     public class IA
     {
         // Definir as constantes da rede neural
-        public int INPUT_SIZE = 5; // tamanho da entrada da rede neural (por exemplo, posição x, posição y, velocidade posição do inimigo mais próximo x, posição do inimigo mais próximo y)
-        public int OUTPUT_SIZE = 4; // tamanho da saída da rede neural (movimentação para esquerda, direita, cima ou baixo)
-        public int HIDDEN_LAYER_SIZE = 20; // tamanho da camada oculta da rede neural
+        public int INPUT_SIZE { get; set; } = 5; // tamanho da entrada da rede neural (por exemplo, posição x, posição y, velocidade posição do inimigo mais próximo x, posição do inimigo mais próximo y)
+        public int OUTPUT_SIZE { get; set; } = 4; // tamanho da saída da rede neural (movimentação para esquerda, direita, cima ou baixo)
+        public int HIDDEN_LAYER_SIZE { get; set; } = 9; // tamanho da camada oculta da rede neural
         public int PositionIndex { get; set; }
 
         public double[][] input { get; set; }
         public double[][] output { get; set; }
 
-        public double learningRate { get; set; } = 0.1;
+        public double learningRate { get; set; } = 1;
         public double momentum { get; set; } = 0.9;
-        public double epoch { get; set; } = 1000;
-
+        public double epoch { get; set; } = 10000;
+        public int qtdDate { get; set; } = 2000;
         public bool Trained { get; set; }
-
+        
         public ActivationNetwork ActivationNetwork { get; set; }
         
         public IA CreateIA()
@@ -43,8 +43,8 @@ namespace Asteroid.RedeNeural.Learning
             var IA = new IA()
             {
                 ActivationNetwork = neuralNetwork,
-                input = new double[1000][],
-                output = new double[1000][],
+                input = new double[qtdDate][],
+                output = new double[qtdDate][],
             };
 
             return IA;
@@ -67,17 +67,21 @@ namespace Asteroid.RedeNeural.Learning
 
         public void SaveBaseTrained()
         {
-            var modelName = $"training_{DateTime.Now.Ticks}.bin";
+            var modelNameInput = $"input_{DateTime.Now.Ticks}.json";
+            var modelNameOutput = $"output_{DateTime.Now.Ticks}.json";
             var modelDirectory = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA");
-            var modelFolder = Path.Combine(modelDirectory, modelName);
+            var modelDirectoryInput = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA", "Input");
+            var modelDirectoryOutput = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA", "Output");
 
             FileHelper.EnsureDirectoryExists(modelDirectory);
+            FileHelper.EnsureDirectoryExists(modelDirectoryInput);
+            FileHelper.EnsureDirectoryExists(modelDirectoryOutput);
 
-            using (FileStream fileStream = new FileStream(modelFolder, FileMode.Create))
-            {
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
-                binaryFormatter.Serialize(fileStream, ActivationNetwork);
-            }
+            var jsonInput = this.input.ToJson();
+            FileHelper.WriterFile(modelDirectoryInput, modelNameInput, jsonInput);
+
+            var jsonOutput = this.output.ToJson();
+            FileHelper.WriterFile(modelDirectoryOutput, modelNameOutput, jsonOutput);
         }
         public static ActivationNetwork LoadLastModel()
         {
@@ -89,11 +93,36 @@ namespace Asteroid.RedeNeural.Learning
 
         public bool HasBaseTrained()
         {
-            var modelDirectory = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA");
+            var modelDirectory = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA", "Input");
+
+            FileHelper.EnsureDirectoryExists(modelDirectory);
+
             var files = Directory.GetFiles(modelDirectory);
             var hasBaseTrained = (files?.Count() ?? 0) > 0;
             Trained = hasBaseTrained;
+           
             return hasBaseTrained;
         }       
+
+        public IA LoadDataTrained()
+        {
+            var modelDirectoryInput = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA", "Input");
+            var modelDirectoryOutput = Path.Combine(Environment.CurrentDirectory, "BaseTrainingIA", "Output");
+
+            FileHelper.EnsureDirectoryExists(modelDirectoryInput);
+            FileHelper.EnsureDirectoryExists(modelDirectoryOutput);
+
+            var filesInput = Directory.GetFiles(modelDirectoryInput);
+            var filesOutput = Directory.GetFiles(modelDirectoryOutput);
+            var inputFile = FileHelper.ReadFile(filesInput.FirstOrDefault());
+            var outputFile = FileHelper.ReadFile(filesOutput.FirstOrDefault());
+            var inputObg = inputFile.ToObject<double[][]>();
+            var outputObg = outputFile.ToObject<double[][]>();
+
+            this.input = inputObg;
+            this.output = outputObg;
+
+            return this;
+        }
     }
 }

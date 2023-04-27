@@ -64,12 +64,12 @@ namespace Asteroid.RedeNeural.Training
         {
             var teacher = new BackPropagationLearning(network.ActivationNetwork);
             teacher.LearningRate = network.learningRate;
-            teacher.Momentum = network.momentum;
+            teacher.Momentum = network.momentum;            
 
             var error = double.MaxValue;
             var epoch = 0;
 
-            while (error > 0.01 && epoch < network.epoch)
+            while (epoch < network.epoch)
             {
                 error = teacher.RunEpoch(network.input, network.output);
                 epoch++;

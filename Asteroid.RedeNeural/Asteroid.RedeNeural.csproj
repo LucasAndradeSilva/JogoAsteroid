@@ -31,10 +31,9 @@
     <PackageReference Include="Accord.Controls" Version="3.8.0" />
     <PackageReference Include="Accord.Neuro" Version="3.8.0" />
     <PackageReference Include="Accord.Statistics" Version="3.8.0" />
-    <PackageReference Include="ConsoleGraphics" Version="0.1.4" />
+    <PackageReference Include="Microsoft.ML" Version="1.6.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
-    <PackageReference Include="OxyPlot.WindowsForms" Version="2.1.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Asteroid.Gui\Asteroid.Gui.csproj" />
