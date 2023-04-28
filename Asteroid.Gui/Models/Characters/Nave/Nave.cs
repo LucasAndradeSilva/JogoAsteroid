@@ -1,5 +1,4 @@
 ﻿using Asteroid.Gui.Enuns;
-using Asteroid.Gui.Models.Characters.Game;
 using Asteroid.Gui.Guis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Input.Touch;
 using Asteroid.Gui.Helpers;
+using Asteroid.Gui.Models.Characters.Game;
 
 namespace Asteroid.Gui.Models.Characters.Nave
 {
@@ -25,19 +25,19 @@ namespace Asteroid.Gui.Models.Characters.Nave
         public bool SpecialShoot { get; set; }
         public Bullet Bullet { get; set; }
         public List<PowerUp> Powers { get; set; }
-        private EnumMovement LastMoviment = (EnumMovement)(new Random().Next(1,8));
+        private EnumMovement LastMoviment = (EnumMovement)new Random().Next(1, 8);
         public string GetTextureHit()
         {
             if (!IsHited)
             {
-                return $"{this.TextureName}Hit";
+                return $"{TextureName}Hit";
             }
             else
             {
-                return this.TextureName;
+                return TextureName;
             }
         }
-        public void Initialize(TouchLocation touchLocation ,KeyboardState keyboardState, AsteroidGame game, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
+        public void Initialize(TouchLocation touchLocation, KeyboardState keyboardState, AsteroidGame game, GameScreen gameScreen, Texture2D texture, GameTime gameTime)
         {
             PlayerUsePowerUp(keyboardState, gameScreen, gameTime.ElapsedGameTime);
             PlayerMovement(touchLocation, keyboardState, game);
@@ -64,8 +64,8 @@ namespace Asteroid.Gui.Models.Characters.Nave
                     if (!Powers.Any(x => x.Using))
                     {
                         Powers[0].UsePowerUp(this, gameScreen);
-                        Powers[0].TimeElapsedPower += (int)ElapsedGameTime.TotalMilliseconds;                       
-                    }                    
+                        Powers[0].TimeElapsedPower += (int)ElapsedGameTime.TotalMilliseconds;
+                    }
                 }
             }
 
@@ -151,19 +151,19 @@ namespace Asteroid.Gui.Models.Characters.Nave
             {
                 if (keyboardState.IsKeyDown(Keys.Left))
                 {
-                    this.X -= this.Speed;
+                    X -= Speed;
                 }
                 if (keyboardState.IsKeyDown(Keys.Right))
                 {
-                    this.X += this.Speed;
+                    X += Speed;
                 }
                 if (keyboardState.IsKeyDown(Keys.Up))
                 {
-                    this.Y -= this.Speed;
+                    Y -= Speed;
                 }
                 if (keyboardState.IsKeyDown(Keys.Down))
                 {
-                    this.Y += this.Speed;
+                    Y += Speed;
                 }
             }
             else
@@ -171,73 +171,73 @@ namespace Asteroid.Gui.Models.Characters.Nave
                 var touchX = (int)touchLocation.Position.X;
                 var touchY = (int)touchLocation.Position.Y - 200;
 
-               this.X = touchX <= 0 ? this.X : touchX;
-               this.Y = touchY <= 0 ? this.Y : touchY;
-            }            
+                X = touchX <= 0 ? X : touchX;
+                Y = touchY <= 0 ? Y : touchY;
+            }
 
             ScreenLimit(game.graphics);
         }
         public void PlayerMovement(TouchLocation touchLocation, KeyboardState keyboardState)
         {
-            
+
             if (keyboardState.IsKeyDown(Keys.Left))
             {
-                this.X -= this.Speed;
+                X -= Speed;
             }
             if (keyboardState.IsKeyDown(Keys.Right))
             {
-                this.X += this.Speed;
+                X += Speed;
             }
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                this.Y -= this.Speed;
+                Y -= Speed;
             }
             if (keyboardState.IsKeyDown(Keys.Down))
             {
-                this.Y += this.Speed;
+                Y += Speed;
             }
-                     
+
         }
         public void PlayerMovement2(KeyboardState keyboardState, GraphicsDeviceManager graphics)
         {
             if (keyboardState.IsKeyDown(Keys.A))
             {
-                this.X -= this.Speed;
+                X -= Speed;
             }
             if (keyboardState.IsKeyDown(Keys.D))
             {
-                this.X += this.Speed;
+                X += Speed;
             }
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                this.Y -= this.Speed;
+                Y -= Speed;
             }
             if (keyboardState.IsKeyDown(Keys.S))
             {
-                this.Y += this.Speed;
+                Y += Speed;
             }
 
             ScreenLimit(graphics);
         }
         public void AutoMovement(GraphicsDeviceManager graphics, TimeSpan ElapsedGameTime)
-        {            
+        {
             var randomNumber = Random.Shared.Next(1, 8);
             var randomMoviment = (EnumMovement)randomNumber;
 
-            if (this.ElapsedTimeSinceLastMovement >= this.TimeBetweenMovement)
-            {                
+            if (ElapsedTimeSinceLastMovement >= TimeBetweenMovement)
+            {
                 if (randomMoviment != LastMoviment)
                 {
-                    this.Moviment(randomMoviment, this.Speed, graphics);
+                    Moviment(randomMoviment, Speed, graphics);
                     LastMoviment = randomMoviment;
                 }
 
-                this.ElapsedTimeSinceLastMovement = 0;
+                ElapsedTimeSinceLastMovement = 0;
             }
             else
-            {                
-                this.ElapsedTimeSinceLastMovement += (int)ElapsedGameTime.TotalMilliseconds;
-                this.Moviment(LastMoviment, this.Speed, graphics);
+            {
+                ElapsedTimeSinceLastMovement += (int)ElapsedGameTime.TotalMilliseconds;
+                Moviment(LastMoviment, Speed, graphics);
             }
 
             var width = graphics.PreferredBackBufferWidth - 100;

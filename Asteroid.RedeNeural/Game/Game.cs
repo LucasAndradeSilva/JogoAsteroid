@@ -9,18 +9,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Asteroid.Gui.Models.Screens;
 using Asteroid.Gui.Models.Elements;
-using Asteroid.Gui.Models.Characters.Nave;
-using Asteroid.Gui.Models.Characters.Game;
 using Asteroid.Gui.Guis;
 using Asteroid.Gui.Models.Characters;
 using Asteroid.Gui.Enuns;
 using Asteroid.Gui.Helpers;
 using Accord.Neuro;
-using Asteroid.RedeNeural.Learning;
 using Accord.Neuro.Learning;
-using Asteroid.RedeNeural.Training;
 using Microsoft.ML;
 using Microsoft.ML.Data;
+using Asteroid.Gui.Models.Characters.Game;
+using Asteroid.Gui.Models.Characters.Nave;
 
 namespace Asteroid.RedeNeural.Game
 {
@@ -65,9 +63,9 @@ namespace Asteroid.RedeNeural.Game
 
         #endregion
 
-        public IA IA{ get; set; } = new IA();
-        // Definir o algoritmo de aprendizado da rede neural
-        BackPropagationLearning learningAlgorithm;
+        #region RNA
+        Rna Rna = new Rna();
+        #endregion
 
         public Game(AsteroidGame game) : base(game)
         {
@@ -97,7 +95,7 @@ namespace Asteroid.RedeNeural.Game
                     X = game.graphics.PreferredBackBufferWidth,
                     Width = SizeLife,
                     Heigth = SizeLife,
-                   Texture = game.Content.Load<Texture2D>("Images/life")
+                    Texture = game.Content.Load<Texture2D>("Images/life")
                 },
                 Bullet = new Bullet()
                 {
@@ -130,19 +128,8 @@ namespace Asteroid.RedeNeural.Game
                 X = 10,
                 Y = 10
             };
-                                    
-            IDataView trainingData = mlContext.Data.LoadFromEnumerable(GetDatas());
 
-            var pipeline = mlContext
-                .Transforms.Conversion.ConvertType("NaveX", outputKind: DataKind.Single)
-                .Append(mlContext.Transforms.Conversion.ConvertType("NaveY", outputKind: DataKind.Single))
-                .Append(mlContext.Transforms.Conversion.ConvertType("MeteoroX", outputKind: DataKind.Single))
-                .Append(mlContext.Transforms.Conversion.ConvertType("MeteoroY", outputKind: DataKind.Single))
-                .Append(mlContext.Transforms.Conversion.ConvertType("Direcao", outputKind: DataKind.Single))
-                .Append(mlContext.Transforms.Concatenate("Features", "NaveX", "NaveY", "MeteoroX", "MeteoroY"))
-                .Append(mlContext.Regression.Trainers.Sdca(labelColumnName: "Direcao", maximumNumberOfIterations: 2000));
-
-            model = pipeline.Fit(trainingData);
+            
         }
         public override void LoadContent()
         {
@@ -161,7 +148,7 @@ namespace Asteroid.RedeNeural.Game
             LifeTexture = game.Content.Load<Texture2D>("Images/life");
             EnemyTexture = game.Content.Load<Texture2D>("Images/inimiga");
         }
-        
+
         public override void Update(GameTime gameTime)
         {
             var keyboardState = Keyboard.GetState();
@@ -241,37 +228,22 @@ namespace Asteroid.RedeNeural.Game
                 if (Boss.CheckCollision(Nave.Rectangle))
                     GameOver();
             }
-
-            var data = new GameData();
-
+           
             var nearestRock = AsteroidRock?.Asteroids?.OrderBy(x => (x.Vector - Nave.Vector).Length())?.FirstOrDefault();
             if (nearestRock != null)
             {
-
-                data.MeteoroY = nearestRock.Y;
-                data.MeteoroX = nearestRock.X;
-                data.NaveX = Nave.X;
-                data.NaveY = Nave.Y;
-
-                var prediction = mlContext.Model.CreatePredictionEngine<GameData, Prediction>(model).Predict(data);
-
-                //if (data.MeteoroX >= (data.NaveX - 40) && data.MeteoroX >= (data.NaveX + 40))
-                //{
-                    if (prediction.Direcao < 0)
-                    {
-                        Nave.X -= 3;
-                        Console.WriteLine($"Change de ir para a esquerda: {prediction.Direcao.ToString("p2")}");
-                    }
-                    else
-                    {
-                        Nave.X += 3;
-                        Console.WriteLine($"Change de ir para a direita: {prediction.Direcao.ToString("p2")}");
-                    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine($"Change de ficar parado: {prediction.Direcao.ToString("p2")}");
-                //}
+                var data = new GameData()
+                {
+                    MeteoroY = nearestRock.Y,
+                    MeteoroX = nearestRock.X,
+                    NaveX = Nave.X,
+                    NaveY = Nave.Y
+                };
+             
+                Rna.Prediction(data, (result) =>
+                {
+                    //Logica de desviar aqui
+                });
             }
 
             Nave.ScreenLimit(game.graphics);
@@ -497,104 +469,7 @@ namespace Asteroid.RedeNeural.Game
 
 
 
-
-
-
-
-
-        MLContext mlContext = new MLContext();
-
-        TransformerChain<RegressionPredictionTransformer<Microsoft.ML.Trainers.LinearRegressionModelParameters>> model;
-
-
-        public class GameData
-        {
-            public int NaveX { get; set; }
-            public int NaveY { get; set; }
-            public int MeteoroX { get; set; }
-            public int MeteoroY { get; set; }
-            public int Direcao { get; set; }
-        }
-
-        public class Prediction
-        {
-            [ColumnName("Score")]
-            public float Direcao { get; set; }
-        }
-        public void Run()
-        {
-
-          
-
-            for (int i = 0; i < 1000; i++)
-            {
-                var randNave = GetRandomPosition();
-                var randMeteor = GetRandomPosition();
-
-                var data = new GameData();
-
-                data.MeteoroY = randMeteor.y;
-                data.MeteoroX = randMeteor.x;
-                data.NaveX = randNave.x;
-                data.NaveY = randNave.y;
-
-                var prediction = mlContext.Model.CreatePredictionEngine<GameData, Prediction>(model).Predict(data);
-
-                if (data.MeteoroX >= (data.NaveX - 40) && data.MeteoroX <= (data.NaveX + 40))
-                {
-                    if (prediction.Direcao < 0)
-                    {
-                        Console.WriteLine($"Change de ir para a esquerda: {prediction.Direcao.ToString("p2")}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Change de ir para a direita: {prediction.Direcao.ToString("p2")}");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine($"Change de ficar parado: {prediction.Direcao.ToString("p2")}");
-                }
-            }
-        }
-        public (int x, int y) GetRandomPosition()
-        {
-            var randX = Random.Shared.Next(0, 600);
-            var randY = Random.Shared.Next(0, 1000);
-
-            return (randX, randY);
-        }
-        public List<GameData> GetDatas()
-        {
-            var datas = new List<GameData>();
-            for (int i = 0; i < 2000; i++)
-            {
-                var randNave = GetRandomPosition();
-                var randMeteor = GetRandomPosition();
-
-                var data = new GameData();
-
-                data.MeteoroY = randMeteor.y;
-                data.MeteoroX = randMeteor.x;
-                data.NaveX = randNave.x;
-                data.NaveY = randNave.y;
-
-                if (data.MeteoroX >= (data.NaveX - 40) && data.MeteoroX <= (data.NaveX + 40))
-                {
-                    var direcao = Random.Shared.Next(1, 3);
-                    data.Direcao = direcao;
-                }
-                else
-                {
-                    data.Direcao = 0;
-                }
-
-                datas.Add(data);
-            }
-
-            return datas;
-        }
     }
-   
+
 }
 

@@ -1,7 +1,7 @@
 ﻿using Asteroid.Gui.Helpers;
 using Asteroid.Gui.Models.Characters;
-using Asteroid.Gui.Models.Characters.Nave;
 using Asteroid.Gui.Models.Elements;
+using Asteroid.Gui.Models.Characters.Nave;
 using Asteroid.Gui.Models.Screens;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

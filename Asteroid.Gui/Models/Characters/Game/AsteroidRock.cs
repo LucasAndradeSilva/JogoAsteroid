@@ -1,5 +1,4 @@
 ﻿using Asteroid.Gui.Enuns;
-using Asteroid.Gui.Models.Characters;
 using Asteroid.Gui.Models.Elements;
 using Microsoft.Xna.Framework;
 using System;
@@ -12,7 +11,7 @@ namespace Asteroid.Gui.Models.Characters.Game
 {
     public class AsteroidRock : Character
     {
-        public int Count { get; set; }        
+        public int Count { get; set; }
         public List<AsteroidRock> Asteroids { get; set; }
 
         public void CreateAsteroid(GraphicsDeviceManager graphics)

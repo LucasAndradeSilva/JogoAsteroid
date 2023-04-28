@@ -21,7 +21,7 @@ namespace Asteroid.Gui.Models.Characters.Nave
         public List<Bullet> Bullets { get; set; }
         public void BulletShoot(KeyboardState keyboardState, TimeSpan ElapsedGameTime, Nave nave)
         {
-            if (keyboardState.IsKeyDown(Keys.Enter) && this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
+            if (keyboardState.IsKeyDown(Keys.Enter) && ElapsedTimeSinceLastShot >= TimeBetweenShots)
             {
                 if (nave.SpecialShoot)
                 {
@@ -30,16 +30,16 @@ namespace Asteroid.Gui.Models.Characters.Nave
                 else
                 {
                     CreateShoots(1, nave);
-                }                
+                }
             }
             else
             {
-                this.ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
+                ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
             }
         }
         public void BulletShoot2(KeyboardState keyboardState, TimeSpan ElapsedGameTime, Nave nave)
         {
-            if (keyboardState.IsKeyDown(Keys.Space) && this.ElapsedTimeSinceLastShot2 >= this.TimeBetweenShots2)
+            if (keyboardState.IsKeyDown(Keys.Space) && ElapsedTimeSinceLastShot2 >= TimeBetweenShots2)
             {
                 if (nave.SpecialShoot)
                 {
@@ -52,7 +52,7 @@ namespace Asteroid.Gui.Models.Characters.Nave
             }
             else
             {
-                this.ElapsedTimeSinceLastShot2 += (int)ElapsedGameTime.TotalMilliseconds;
+                ElapsedTimeSinceLastShot2 += (int)ElapsedGameTime.TotalMilliseconds;
             }
         }
         private void BulletShoot(int X, int Y, int Width, Nave nave)
@@ -62,7 +62,7 @@ namespace Asteroid.Gui.Models.Characters.Nave
                 X = X + Width / 2 - 4,
                 Y = Y,
                 Width = this.Width,
-                Heigth = this.Heigth
+                Heigth = Heigth
             };
 
             if (nave.SpecialShoot && nave.Enemy)
@@ -70,41 +70,41 @@ namespace Asteroid.Gui.Models.Characters.Nave
             else if (nave.SpecialShoot && !nave.Enemy)
                 bullet.Movement = RandomMovimentExceptDown();
 
-            this.Bullets.Add(bullet);
+            Bullets.Add(bullet);
 
-            this.ElapsedTimeSinceLastShot = 0;
-            this.ElapsedTimeSinceLastShot2 = 0;
+            ElapsedTimeSinceLastShot = 0;
+            ElapsedTimeSinceLastShot2 = 0;
         }
         public void AutoBulletShoot(TimeSpan ElapsedGameTime, Nave nave)
         {
-            if (this.ElapsedTimeSinceLastShot >= this.TimeBetweenShots)
+            if (ElapsedTimeSinceLastShot >= TimeBetweenShots)
             {
                 CheckShoot(nave);
             }
             else
             {
-                this.ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
+                ElapsedTimeSinceLastShot += (int)ElapsedGameTime.TotalMilliseconds;
             }
         }
         public void BulletShootMovement(GraphicsDeviceManager graphics, EnumMovement MovementPlayer, Action<dynamic> CallBackAction)
         {
-            for (int i = this.Bullets.Count - 1; i >= 0; i--)
-            {                
-                var bullet = this.Bullets[i];
+            for (int i = Bullets.Count - 1; i >= 0; i--)
+            {
+                var bullet = Bullets[i];
                 var movement = bullet.Movement == EnumMovement.Nothing ? MovementPlayer : bullet.Movement;
 
-                this.Bullets[i].Moviment(movement, bullet.Speed, graphics);
+                Bullets[i].Moviment(movement, bullet.Speed, graphics);
 
-                var exitedScreen = this.Bullets[i].CheckLeftScreen(graphics, movement, () =>
+                var exitedScreen = Bullets[i].CheckLeftScreen(graphics, movement, () =>
                 {
-                    this.Bullets.RemoveAt(i);
+                    Bullets.RemoveAt(i);
                     i--;
                 });
 
                 if (!exitedScreen)
                     CallBackAction(bullet);
             }
-        }        
+        }
         public EnumMovement RandomMovimentExceptDown()
         {
             var movement = EnumMovement.Up;
@@ -117,7 +117,7 @@ namespace Asteroid.Gui.Models.Characters.Nave
                     found = false;
                 }
                 else
-                {                 
+                {
                     break;
                 }
             }
@@ -145,15 +145,15 @@ namespace Asteroid.Gui.Models.Characters.Nave
         }
         private void CreateShoots(int qtdShoots, Nave nave)
         {
-            for (int i = 0; i < qtdShoots; i++)            
-                BulletShoot(nave.X, nave.Y, nave.Width, nave);            
-        }        
+            for (int i = 0; i < qtdShoots; i++)
+                BulletShoot(nave.X, nave.Y, nave.Width, nave);
+        }
         public void CheckShoot(Nave nave)
         {
-            if (nave.IsBoss)            
-                CreateShoots(Random.Shared.Next(1, 4), nave);            
-            else            
-                CreateShoots(1, nave);            
+            if (nave.IsBoss)
+                CreateShoots(Random.Shared.Next(1, 4), nave);
+            else
+                CreateShoots(1, nave);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Asteroid.Gui.Models.Characters
         public Life Life { get; set; }
         public int Points { get; set; } = 10;
         public bool Enemy { get; set; } = false;
-        public bool Destroyed { get; set; } = false;        
+        public bool Destroyed { get; set; } = false;
         public bool IsHited { get; set; } = false;
         public bool Immune { get; set; }
 
@@ -37,30 +37,30 @@ namespace Asteroid.Gui.Models.Characters
 
         public bool CheckCollision(Rectangle rectangleCollision)
         {
-            return this.Rectangle.Intersects(rectangleCollision);
+            return Rectangle.Intersects(rectangleCollision);
         }
 
         public void Hit(Texture2D hit)
         {
-            this.Texture = hit;
-            this.IsHited = true;
-        }         
-        
+            Texture = hit;
+            IsHited = true;
+        }
+
         public void CheckUnhit(Texture2D textura, TimeSpan ElapsedGameTime)
         {
             if (IsHited)
             {
                 if (TimeElapsedHit > TimeBetweenHit)
                 {
-                    this.Texture = textura;
-                    this.IsHited = false;
-                    this.TimeElapsedHit = 0;
+                    Texture = textura;
+                    IsHited = false;
+                    TimeElapsedHit = 0;
                 }
                 else
                 {
-                    this.TimeElapsedHit += (int)ElapsedGameTime.TotalMilliseconds;
+                    TimeElapsedHit += (int)ElapsedGameTime.TotalMilliseconds;
                 }
-            }            
+            }
         }
     }
 
@@ -68,7 +68,7 @@ namespace Asteroid.Gui.Models.Characters
     {
         public Life()
         {
-            
+
         }
         public Guid Id
         {
@@ -77,7 +77,7 @@ namespace Asteroid.Gui.Models.Characters
                 return Guid.NewGuid();
             }
         }
-        public List<Life> Lifes { get; set; } = new List<Life> ();
+        public List<Life> Lifes { get; set; } = new List<Life>();
 
         public void CreateLifes(int qtdLifes = 3)
         {
@@ -85,14 +85,14 @@ namespace Asteroid.Gui.Models.Characters
             {
                 var lifeClone = new Life()
                 {
-                    X = this.X,
-                    Y = this.Y,
-                    Width = this.Width,
-                    Heigth = this.Heigth,
-                    Texture = this.Texture,
+                    X = X,
+                    Y = Y,
+                    Width = Width,
+                    Heigth = Heigth,
+                    Texture = Texture,
                     FisrtDraw = false,
-                };          
-            
+                };
+
                 Lifes.Add(lifeClone);
             }
         }

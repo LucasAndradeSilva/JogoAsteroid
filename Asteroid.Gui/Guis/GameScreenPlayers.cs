@@ -1,5 +1,4 @@
-﻿using Asteroid.Gui.Models.Characters.Nave;
-using Asteroid.Gui.Models.Elements;
+﻿using Asteroid.Gui.Models.Elements;
 using Asteroid.Gui.Helpers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,11 +13,12 @@ using Asteroid.Gui.Enuns;
 using System.Threading;
 using Asteroid.Gui.Models.Characters;
 using System.Linq;
-using Asteroid.Gui.Models.Characters.Game;
 using System.Runtime.Intrinsics.X86;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Xna.Framework.Input.Touch;
+using Asteroid.Gui.Models.Characters.Game;
+using Asteroid.Gui.Models.Characters.Nave;
 
 namespace Asteroid.Gui.Guis
 {

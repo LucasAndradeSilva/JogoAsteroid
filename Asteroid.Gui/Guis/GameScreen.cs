@@ -1,8 +1,6 @@
 ﻿using Asteroid.Gui.Models.Screens;
 using Asteroid.Gui.Models.Characters;
-using Asteroid.Gui.Models.Characters.Nave;
 using Asteroid.Gui.Models.Elements;
-using Asteroid.Gui.Models.Characters.Game;
 using Asteroid.Gui.Enuns;
 using Asteroid.Gui.Helpers;
 using Microsoft.Xna.Framework;
@@ -12,8 +10,11 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input.Touch;
+using Asteroid.Gui.Models.Characters.Game;
+using Asteroid.Gui.Models.Characters.Nave;
 
-namespace Asteroid.Gui.Guis { 
+namespace Asteroid.Gui.Guis
+{
 
     public class GameScreen : Screen
     {
