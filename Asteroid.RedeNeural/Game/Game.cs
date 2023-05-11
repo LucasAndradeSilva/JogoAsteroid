@@ -63,10 +63,6 @@ namespace Asteroid.RedeNeural.Game
 
         #endregion
 
-        #region RNA
-        Rna Rna = new Rna();
-        #endregion
-
         public Game(AsteroidGame game) : base(game)
         {
             game.Window.Title = "Asteroid Game";
@@ -128,8 +124,7 @@ namespace Asteroid.RedeNeural.Game
                 X = 10,
                 Y = 10
             };
-
-            
+  
         }
         public override void LoadContent()
         {
@@ -228,22 +223,27 @@ namespace Asteroid.RedeNeural.Game
                 if (Boss.CheckCollision(Nave.Rectangle))
                     GameOver();
             }
-           
-            var nearestRock = AsteroidRock?.Asteroids?.OrderBy(x => (x.Vector - Nave.Vector).Length())?.FirstOrDefault();
+
+            var nearestRock = AsteroidRock.Asteroids.Where(rock => Nave.CheckAreaNext(rock.Rectangle)).OrderBy(x => (x.Vector - Nave.Vector).Length())?.FirstOrDefault();
             if (nearestRock != null)
             {
-                var data = new GameData()
+                var positionRock = Nave.PositionForMe(nearestRock.Rectangle);
+                if (positionRock == EnumMovement.Right)
                 {
-                    MeteoroY = nearestRock.Y,
-                    MeteoroX = nearestRock.X,
-                    NaveX = Nave.X,
-                    NaveY = Nave.Y
-                };
-             
-                Rna.Prediction(data, (result) =>
+                    Nave.X -= 40;
+                }
+                else if (positionRock == EnumMovement.Left)
                 {
-                    //Logica de desviar aqui
-                });
+                    Nave.X += 40;
+                }
+                else if (positionRock == EnumMovement.Up)
+                {
+                    var randDirection = Random.Shared.Next(0, 2);
+                    if (randDirection == 0)
+                        Nave.X -= 40;
+                    else
+                        Nave.X += 40;
+                }
             }
 
             Nave.ScreenLimit(game.graphics);

@@ -1,4 +1,5 @@
-﻿using Asteroid.Gui.Models.Elements;
+﻿using Asteroid.Gui.Enuns;
+using Asteroid.Gui.Models.Elements;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -35,9 +36,39 @@ namespace Asteroid.Gui.Models.Characters
         public int TimeElapsedHit { get; set; } = 0;
 
 
-        public bool CheckCollision(Rectangle rectangleCollision)
+        public bool CheckCollision(Rectangle rectangle)
         {
-            return Rectangle.Intersects(rectangleCollision);
+            return Rectangle.Intersects(rectangle);
+        }
+
+        public bool CheckAreaNext(Rectangle rectangle)
+        {            
+            rectangle.Width = 100;
+            rectangle.Height = 100;
+            var isInArea = this.Rectangle.Intersects(rectangle);
+            return isInArea;
+        }
+
+        public EnumMovement PositionForMe(Rectangle rectangle)
+        {
+            if (rectangle.X > this.X)
+            {
+                return EnumMovement.Right;
+            }
+            else if (rectangle.X < this.X)
+            {
+                return EnumMovement.Left;
+            }
+            else if (rectangle.Y > this.Y)
+            {
+                return EnumMovement.Up;
+            }
+            else if (rectangle.Y < this.Y)
+            {
+                return EnumMovement.Down;
+            }
+
+            return EnumMovement.Nothing;
         }
 
         public void Hit(Texture2D hit)
